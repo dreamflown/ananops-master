@@ -1,12 +1,9 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：UacRoleMapper.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.mapper;
@@ -14,6 +11,7 @@ package com.ananops.provider.mapper;
 import com.ananops.core.mybatis.MyMapper;
 import com.ananops.provider.model.domain.UacRole;
 import com.ananops.provider.model.dto.role.BindUserDto;
+import com.ananops.provider.model.dto.role.QueryGroupRoleDto;
 import com.ananops.provider.model.vo.RoleVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -24,7 +22,7 @@ import java.util.List;
 /**
  * The interface Uac role mapper.
  *
- * @author paascloud.net@gmail.com
+ * @author ananops.com@gmail.com
  */
 @Mapper
 @Component
@@ -46,6 +44,24 @@ public interface UacRoleMapper extends MyMapper<UacRole> {
 	 * @return the list
 	 */
 	List<RoleVo> queryRoleListWithPage(UacRole role);
+
+	/**
+	 * 基于角色Id批量查询角色List
+	 *
+	 * @param role the role
+	 *
+	 * @return the list
+	 */
+	List<RoleVo> queryRoleListWithBatchRoleId(List<Long> roleIds);
+
+	/**
+	 * 批量查询角色List,增加筛选条件
+	 *
+	 * @param role the role
+	 *
+	 * @return the list
+	 */
+	List<RoleVo> queryRoleListWithQueryGroupRoleDto(@Param("queryGroupRoleDto") QueryGroupRoleDto queryGroupRoleDto);
 
 	/**
 	 * Select all role info by user id list.

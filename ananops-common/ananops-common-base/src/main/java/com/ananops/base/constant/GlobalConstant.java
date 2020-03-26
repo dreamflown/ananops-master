@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2018. ananops.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.net All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：GlobalConstant.java
- * 创建人：刘兆明
+ * 创建人：ananops
  * 联系方式：ananops.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+
+
+ *  * 平台官网: http://ananops.com
  */
 package com.ananops.base.constant;
 
@@ -39,7 +39,7 @@ public class GlobalConstant {
 	public static final String TEST_PROFILE = "test";
 	public static final String PRO_PROFILE = "pro";
 	public static final int TWO_INT = 2;
-	public static final int M_SIZE = 1024;
+	public static final int M_SIZE = 1024 * 1024;
 	public static final String ROOT_PREFIX = "ananops";
 
 	public static final int EXCEPTION_CAUSE_MAX_LENGTH = 2048;
@@ -116,6 +116,10 @@ public class GlobalConstant {
 		 * redis key default expire = 1MINUTES
 		 */
 		public static final long REDIS_DEFAULT_EXPIRE = 1L;
+	}
+
+	public static final class Spc {
+		public static final Long SPC_MANAGER_ROLE_ID = 782523159130679297L;
 	}
 
 	/**

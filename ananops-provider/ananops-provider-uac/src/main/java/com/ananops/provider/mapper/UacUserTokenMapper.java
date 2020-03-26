@@ -1,12 +1,9 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：UacUserTokenMapper.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.mapper;
@@ -14,6 +11,7 @@ package com.ananops.provider.mapper;
 import com.ananops.core.mybatis.MyMapper;
 import com.ananops.provider.model.domain.UacUserToken;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,7 +20,7 @@ import java.util.Map;
 /**
  * The interface Uac user token mapper.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 @Mapper
 @Component
@@ -51,4 +49,15 @@ public interface UacUserTokenMapper extends MyMapper<UacUserToken> {
 	 * @return the list
 	 */
 	List<Long> listOffLineTokenId();
+
+	/**
+	 * 查找给定的userId集合中当前状态下的Token
+	 *
+	 * @param userToken 用户Token
+	 *
+	 * @param userIds 用户Id集合
+	 *
+	 * @return 用户Token集合
+	 */
+	List<UacUserToken> selectTokenListInUserIds(@Param("userToken") UacUserToken userToken, @Param("userIds") List<Long> userIds);
 }

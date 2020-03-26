@@ -1,16 +1,14 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：OpcOssFeignApiHystrix.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.service.hystrix;
 
+import com.ananops.provider.model.dto.attachment.OptAttachmentUpdateReqDto;
 import com.ananops.provider.model.dto.oss.*;
 import com.ananops.provider.service.OpcOssFeignApi;
 import com.ananops.wrapper.Wrapper;
@@ -22,7 +20,7 @@ import java.util.List;
 /**
  * The class Opc oss feign api hystrix.
  *
- * @author paascloud.net@gmail.com
+ * @author ananops.com@gmail.com
  */
 @Component
 public class OpcOssFeignApiHystrix implements OpcOssFeignApi {
@@ -43,6 +41,16 @@ public class OpcOssFeignApiHystrix implements OpcOssFeignApi {
 
 	@Override
 	public Wrapper<OptUploadFileRespDto> handleFileUpload(final MultipartFile file) {
+		return null;
+	}
+
+	@Override
+	public Wrapper<String> updateAttachmentInfo(final OptAttachmentUpdateReqDto optAttachmentUpdateReqDto) {
+		return null;
+	}
+
+	@Override
+	public Wrapper<String> batchUpdateAttachment(OptAttachmentUpdateReqDto optAttachmentUpdateReqDto) {
 		return null;
 	}
 

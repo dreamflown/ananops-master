@@ -11,13 +11,15 @@ import java.io.Serializable;
 /**
  * The class Uac role menu.
  *
- * @author paascloud.net@gmail.com
+ * @author ananops.com@gmail.com
  */
 @Data
 @Table(name = "an_uac_role_menu")
 @Alias(value = "uacRoleMenu")
 public class UacRoleMenu implements Serializable {
+
 	private static final long serialVersionUID = -9052683954152822756L;
+
 	@Id
 	@Column(name = "role_id")
 	private Long roleId;

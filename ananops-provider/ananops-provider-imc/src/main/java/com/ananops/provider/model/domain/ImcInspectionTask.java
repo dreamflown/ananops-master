@@ -99,4 +99,9 @@ public class ImcInspectionTask extends BaseEntity {
      */
     private Integer frequency;
 
+    /**
+     * 巡检任务内容
+     */
+    private String content;
+
 }

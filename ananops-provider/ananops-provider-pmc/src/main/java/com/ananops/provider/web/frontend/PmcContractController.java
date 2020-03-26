@@ -32,7 +32,7 @@ public class PmcContractController extends BaseController {
     PmcContractService pmcContractService;
 
     @PostMapping("/save")
-    @ApiOperation(httpMethod = "POST", value = "编辑合同,当id为空时新增项目,不为空时为更新项目信息")
+    @ApiOperation(httpMethod = "POST", value = "编辑合同,当id为空时新增合同,不为空时为更新合同信息")
     public Wrapper saveContract(@RequestBody PmcContractDto pmcContractDto) {
         LoginAuthDto loginAuthDto = getLoginAuthDto();
         PmcContract pmcContract = new PmcContract();
@@ -43,21 +43,35 @@ public class PmcContractController extends BaseController {
 
     @PostMapping("/getContractById/{id}")
     @ApiOperation(httpMethod = "POST", value = "根据合同id查询合同")
-    public Wrapper getContractById(@PathVariable Long id) {
+    public Wrapper<PmcContract> getContractById(@PathVariable Long id) {
         PmcContract pmcContract = pmcContractService.getContractById(id);
         return WrapMapper.ok(pmcContract);
     }
 
-    @PostMapping("/getContactListByGroupId/{groupId}")
+    @PostMapping("/getContractListByGroupId/{groupId}")
     @ApiOperation(httpMethod = "POST", value = "获取某个组织的合同列表")
-    public Wrapper getContactListByGroupId(@ApiParam(value = "组织") @PathVariable Long groupId) {
+    public Wrapper<List<PmcContract>> getContactListByGroupId(@ApiParam(value = "组织id") @PathVariable Long groupId) {
         List<PmcContract> pmcContractList = pmcContractService.getContactListByGroupId(groupId);
+        return WrapMapper.ok(pmcContractList);
+    }
+
+    @PostMapping("/getContractListByLikePartyAName/{partyAName}")
+    @ApiOperation(httpMethod = "POST", value = "根据组织名模糊查询获取对应的合同列表")
+    public Wrapper<List<PmcContract>> getContractListByLikePartyAName(@ApiParam(value = "甲方组织名") @PathVariable String partyAName) {
+        List<PmcContract> pmcContractList = pmcContractService.getContractListByLikePartyAName(partyAName);
+        return WrapMapper.ok(pmcContractList);
+    }
+
+    @PostMapping("/getContractListByLikePartyBName/{partyBName}")
+    @ApiOperation(httpMethod = "POST", value = "根据组织名模糊查询获取对应的合同列表")
+    public Wrapper<List<PmcContract>> getContractListByLikePartyBName(@ApiParam(value = "甲方组织名") @PathVariable String partyBName) {
+        List<PmcContract> pmcContractList = pmcContractService.getContractListByLikePartyBName(partyBName);
         return WrapMapper.ok(pmcContractList);
     }
 
     @PostMapping("/getContractListWithPage")
     @ApiOperation(httpMethod = "POST", value = "分页获取所有合同列表")
-    public Wrapper getContractListWithPage(@ApiParam(value = "分页排序参数") @RequestBody BaseQuery baseQuery) {
+    public Wrapper<PageInfo> getContractListWithPage(@ApiParam(value = "分页排序参数") @RequestBody BaseQuery baseQuery) {
         PageInfo pageInfo = pmcContractService.getContractListWithPage(baseQuery);
         return WrapMapper.ok(pageInfo);
     }
@@ -69,8 +83,20 @@ public class PmcContractController extends BaseController {
         return WrapMapper.ok();
     }
 
+    @PostMapping("getContactByAB/{partyAId}/{partyBId}")
+    @ApiOperation(httpMethod = "POST", value = "获取甲乙双方签订的合同")
+    public Wrapper<List<PmcContract>> getContactByAB(@ApiParam(value = "甲方id") @PathVariable Long partyAId,@ApiParam(value = "乙方id") @PathVariable Long partyBId) {
+        List<PmcContract> pmcContractList = pmcContractService.getContactByAB(partyAId,partyBId);
+        return WrapMapper.ok(pmcContractList);
+    }
 
-
+    @PostMapping("/getContractCount/{groupId}")
+    @ApiOperation(httpMethod = "POST", value = "获取合同总数")
+    public Wrapper getContractCount(@ApiParam(value = "组织id") @PathVariable Long groupId) {
+        log.info("获取合同总数");
+        int count = pmcContractService.getContractCount(groupId);
+        return WrapMapper.ok(count);
+    }
 
 
 

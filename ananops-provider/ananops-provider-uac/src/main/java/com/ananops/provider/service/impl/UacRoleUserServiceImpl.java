@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * The class Uac role user service.
  *
- * @author paascloud.net@gmail.com
+ * @author ananops.com@gmail.com
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -146,5 +146,16 @@ public class UacRoleUserServiceImpl extends BaseService<UacRoleUser> implements 
 		if (result < 1) {
 			throw new UacBizException(ErrorCodeEnum.UAC10012006, roleId);
 		}
+	}
+
+	@Override
+	public List<Long> listByRoleIdUserIds(Long roleId, List<Long> userIds) {
+		if (roleId == null) {
+			throw new UacBizException(ErrorCodeEnum.UAC10012001);
+		}
+		if (PublicUtil.isEmpty(userIds)) {
+			throw new UacBizException(ErrorCodeEnum.UAC10011001);
+		}
+		return uacRoleUserMapper.listByRoleIdUserIds(roleId, userIds);
 	}
 }

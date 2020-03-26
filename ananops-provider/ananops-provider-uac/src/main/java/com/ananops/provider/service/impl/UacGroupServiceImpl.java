@@ -1,5 +1,7 @@
 package com.ananops.provider.service.impl;
 
+import com.ananops.provider.model.domain.UacRole;
+import com.ananops.provider.service.UacGroupService;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -19,18 +21,18 @@ import com.ananops.provider.model.domain.UacUser;
 import com.ananops.provider.model.dto.group.GroupBindUserDto;
 import com.ananops.provider.model.dto.group.GroupBindUserReqDto;
 import com.ananops.provider.model.dto.role.BindUserDto;
-import com.ananops.provider.model.user.IdStatusDto;
+import com.ananops.provider.model.dto.user.IdStatusDto;
 import com.ananops.provider.model.enums.UacGroupStatusEnum;
 import com.ananops.provider.model.exceptions.UacBizException;
 import com.ananops.provider.model.vo.GroupZtreeVo;
 import com.ananops.provider.model.vo.MenuVo;
 import com.ananops.provider.service.MdcAddressService;
-import com.ananops.provider.service.UacGroupService;
 import com.ananops.provider.service.UacUserService;
 import com.ananops.provider.utils.TreeUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -38,7 +40,7 @@ import java.util.*;
 /**
  * The class Uac group service.
  *
- * @author paascloud.net@gmail.com
+ * @author ananops.com@gmail.com
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -46,16 +48,24 @@ public class UacGroupServiceImpl extends BaseService<UacGroup> implements UacGro
 
 	@Resource
 	private UacGroupMapper uacGroupMapper;
+
 	@Resource
 	private UacGroupUserMapper uacGroupUserMapper;
+
 	@Resource
 	private UacRoleUserMapper uacRoleUserMapper;
+
 	@Resource
-	private UacRoleMapper uacRoleMapper;
+	private UacGroupService uacGroupService;
+
 	@Resource
 	private UacUserService uacUserService;
+
 	@Resource
 	private MdcAddressService mdcAddressService;
+
+	@Resource
+	private UacRoleMapper uacRoleMapper;
 
 	private int addUacGroup(UacGroup group) {
 		if (StringUtils.isEmpty(group.getStatus())) {
@@ -182,6 +192,13 @@ public class UacGroupServiceImpl extends BaseService<UacGroup> implements UacGro
 
 	@Override
 	@Transactional(readOnly = true, rollbackFor = Exception.class)
+	public List<UacGroup> queryByLikeName(String groupName) {
+		Preconditions.checkArgument(PublicUtil.isNotEmpty(groupName), "组织名称不能为空");
+		return uacGroupMapper.selectGroupByGroupName(groupName);
+	}
+
+    @Override
+	@Transactional(readOnly = true, rollbackFor = Exception.class)
 	public List<GroupZtreeVo> getGroupTree(Long groupId) {
 		// 1. 如果是仓库则 直接把仓库信息封装成ztreeVo返回
 		List<GroupZtreeVo> tree = Lists.newArrayList();
@@ -251,17 +268,29 @@ public class UacGroupServiceImpl extends BaseService<UacGroup> implements UacGro
 		}
 
 		// 查询所有用户包括已禁用的用户
-		List<BindUserDto> bindUserDtoList = uacRoleMapper.selectAllNeedBindUser(GlobalConstant.Sys.SUPER_MANAGER_ROLE_ID, currentUserId);
+//		List<BindUserDto> bindUserDtoList = uacRoleMapper.selectAllNeedBindUser(GlobalConstant.Sys.SUPER_MANAGER_ROLE_ID, currentUserId);
+		Set<BindUserDto> allUserSet = new HashSet<>();
+		// 查询该组织下所有用户包括已禁用的用户
+		List<GroupZtreeVo> groupZtreeVos = uacGroupService.getGroupTree(groupId);
+		for (GroupZtreeVo groupZtreeVo : groupZtreeVos) {
+			List<BindUserDto> bindUserDtoList = uacGroupMapper.selectAllUserByGroupId(GlobalConstant.Sys.SUPER_MANAGER_ROLE_ID, groupZtreeVo.getId(), currentUserId);
+			allUserSet.addAll(bindUserDtoList);
+		}
+
+		// 为所有用户绑定角色信息
+		for (BindUserDto bindUserDto : allUserSet) {
+			List<UacRole> roles = uacRoleMapper.selectAllRoleInfoByUserId(bindUserDto.getUserId());
+			if (roles == null || roles.size() < 1)
+				continue;
+			bindUserDto.setRoleCode(roles.get(0).getRoleCode());
+		}
+		groupBindUserDto.setAllUserSet(allUserSet);
+
 		// 该组织已经绑定的用户
 		List<UacGroupUser> setAlreadyBindUserSet = uacGroupUserMapper.listByGroupId(groupId);
-
-		Set<BindUserDto> allUserSet = new HashSet<>(bindUserDtoList);
-
 		for (UacGroupUser uacGroupUser : setAlreadyBindUserSet) {
 			alreadyBindUserIdSet.add(uacGroupUser.getUserId());
 		}
-
-		groupBindUserDto.setAllUserSet(allUserSet);
 		groupBindUserDto.setAlreadyBindUserIdSet(alreadyBindUserIdSet);
 
 		return groupBindUserDto;
@@ -291,7 +320,7 @@ public class UacGroupServiceImpl extends BaseService<UacGroup> implements UacGro
 		UacGroup group = uacGroupMapper.selectByPrimaryKey(groupId);
 
 		if (group == null) {
-			logger.error("找不到角色信息 groupId={}", groupId);
+			logger.error("找不到组织信息 groupId={}", groupId);
 			throw new UacBizException(ErrorCodeEnum.UAC10015001, groupId);
 		}
 
@@ -308,7 +337,7 @@ public class UacGroupServiceImpl extends BaseService<UacGroup> implements UacGro
 			throw new UacBizException(ErrorCodeEnum.UAC10011023);
 		}
 
-		// 1. 先取消对该角色的用户绑定(不包含超级管理员用户)
+		// 1. 先取消对该组织的用户绑定(不包含超级管理员用户)
 		List<UacGroupUser> groupUsers = uacGroupUserMapper.listByGroupId(groupId);
 
 		if (PublicUtil.isNotEmpty(groupUsers)) {
@@ -316,7 +345,7 @@ public class UacGroupServiceImpl extends BaseService<UacGroup> implements UacGro
 		}
 
 		if (PublicUtil.isEmpty(userIdList)) {
-			// 取消该角色的所有用户的绑定
+			// 取消该组织的所有用户的绑定
 			logger.info("取消绑定所有非超级管理员用户成功");
 			return;
 		}
@@ -336,25 +365,27 @@ public class UacGroupServiceImpl extends BaseService<UacGroup> implements UacGro
 	}
 
 	@Override
-	public int saveUacGroup(UacGroup group, LoginAuthDto loginAuthDto) {
-
-		int result;
+	public Long saveUacGroup(UacGroup group, LoginAuthDto loginAuthDto) {
+		Long result;
 		Preconditions.checkArgument(!StringUtils.isEmpty(group.getPid()), "上级节点不能为空");
 
 		UacGroup parenGroup = uacGroupMapper.selectByPrimaryKey(group.getPid());
 		if (PublicUtil.isEmpty(parenGroup)) {
 			throw new UacBizException(ErrorCodeEnum.UAC10015009, group.getPid());
 		}
-		setGroupAddress(group);
+		if(!PublicUtil.isEmpty(group.getAddressList())){
+			setGroupAddress(group);
+		}
 		group.setUpdateInfo(loginAuthDto);
 
 		if (group.isNew()) {
 			Long groupId = super.generateId();
 			group.setId(groupId);
 			group.setLevel(parenGroup.getLevel() + 1);
-			result = this.addUacGroup(group);
+			this.addUacGroup(group);
+			result = groupId;
 		} else {
-			result = this.editUacGroup(group);
+			result = (long)this.editUacGroup(group);
 		}
 		return result;
 	}
@@ -371,7 +402,7 @@ public class UacGroupServiceImpl extends BaseService<UacGroup> implements UacGro
 			uacGroup.setParentGroupCode(parentGroup.getGroupCode());
 			uacGroup.setParentGroupName(parentGroup.getGroupName());
 		}
-		// 处理饿了吗级联菜单回显地址
+		// 处理级联菜单回显地址
 		Long provinceId = uacGroup.getProvinceId();
 		Long cityId = uacGroup.getCityId();
 		Long areaId = uacGroup.getAreaId();
@@ -468,4 +499,32 @@ public class UacGroupServiceImpl extends BaseService<UacGroup> implements UacGro
 		}
 		return tree;
 	}
+
+	@Override
+	public UacGroup getCompanyInfo(Long groupId) {
+		// 根据前台传入的组织参数校验该组织是否存在
+		UacGroup uacGroup = uacGroupMapper.selectByPrimaryKey(groupId);
+		if (PublicUtil.isEmpty(uacGroup)) {
+			throw new UacBizException(ErrorCodeEnum.UAC10015004, groupId);
+		}
+		//递归获取公司信息
+		if("company".equals(uacGroup.getType())){
+			return uacGroup;
+		}else{
+			return getCompanyInfo(uacGroup.getPid());
+		}
+	}
+
+    @Override
+    public List<GroupZtreeVo> getCompanyList() { ;
+		List<GroupZtreeVo> tree = Lists.newArrayList();
+		UacGroup uacGroupQuery = new UacGroup();
+		uacGroupQuery.setType("company");
+		List<UacGroup> groupList = uacGroupMapper.select(uacGroupQuery);
+		for (UacGroup uacGroup : groupList) {
+			GroupZtreeVo zTreeMenuVo = buildGroupZTreeVoByGroup(uacGroup);
+			tree.add(zTreeMenuVo);
+		}
+        return tree;
+    }
 }

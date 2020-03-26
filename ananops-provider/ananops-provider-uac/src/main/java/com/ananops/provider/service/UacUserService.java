@@ -1,16 +1,15 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：UacUserService.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.service;
 
+import com.ananops.provider.model.domain.UacGroupUser;
+import com.ananops.provider.model.vo.UserVo;
 import com.github.pagehelper.PageInfo;
 import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.core.support.IService;
@@ -18,7 +17,6 @@ import com.ananops.provider.model.domain.UacLog;
 import com.ananops.provider.model.domain.UacUser;
 import com.ananops.provider.model.dto.menu.UserMenuDto;
 import com.ananops.provider.model.dto.user.*;
-import com.ananops.provider.model.user.*;
 import com.ananops.provider.model.vo.UserBindRoleVo;
 import com.ananops.security.core.SecurityUser;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,7 +29,7 @@ import java.util.List;
 /**
  * The interface Uac user service.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 public interface UacUserService extends IService<UacUser> {
 	/**
@@ -200,7 +198,7 @@ public interface UacUserService extends IService<UacUser> {
 	 *
 	 * @param registerDto the register dto
 	 */
-	void register(UserRegisterDto registerDto);
+	Long register(UserRegisterDto registerDto);
 
 	/**
 	 * 校验登录名是否存在.
@@ -314,4 +312,69 @@ public interface UacUserService extends IService<UacUser> {
 	 * @return the uac user
 	 */
 	UacUser findUserInfoByLoginName(String loginName);
+
+	/**
+	 * 服务商添加用户信息.
+	 *
+	 * @param userInfoDto 注册的用户信息
+     */
+	Long addUser(UserInfoDto userInfoDto);
+
+	/**
+	 * 根据用户值机员id获取用户负责人列表
+	 *
+	 * @param groupId,userId
+	 * @return userVo
+	 */
+	List<UserVo> getApprovalUserListById(Long groupId, Long userId);
+
+	/**
+	 * 根据用户id获取下级用户列表
+	 *
+	 * @param userId
+	 * @return userVo
+	 */
+	List<UserVo> getSubordinateUserListByUserId(Long userId);
+
+
+	/**
+	 * 根据用户id获取用户领导的groupId
+	 *
+	 * @param userId
+	 * @return userVo
+	 */
+	Long getPGIdByUserId(Long userId);
+
+	/**
+	 * 获取用户可以绑定角色页面数据
+	 * @param userId
+	 * @param roleId
+	 * @return
+	 */
+	UserBindRoleVo getUserPermitBindRoleDto(Long userId, Long roleId);
+
+	/**
+	 * 普通用户修改个人密码
+	 *
+	 * @param userModifyPwdDto
+	 * @param loginAuthDto
+	 * @return
+	 */
+    int authUserModifyPwd(UserModifyPwdDto userModifyPwdDto, LoginAuthDto loginAuthDto);
+
+	/**
+	 * 通过用户Id集合批量查询用户信息
+	 *
+	 * @param alreadyUserId 用户Id集合
+	 *
+	 * @return 返回用户信息列表
+	 */
+	List<UacUser> batchGetUserInfo(List<Long> alreadyUserId);
+
+	/**
+	 * 用户绑定组织
+	 * @param uacGroupUser
+	 * @param loginAuthDto
+	 */
+    void bindUserGroup(UacGroupUser uacGroupUser, LoginAuthDto loginAuthDto);
 }

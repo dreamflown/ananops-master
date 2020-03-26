@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * The class Bind role dto.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 @Data
 @ApiModel(value = "绑定的用户信息")
@@ -17,9 +17,9 @@ public class BindRoleDto implements Serializable {
 
 	private static final long serialVersionUID = -3385971785265488527L;
 	/**
-	 * 用户ID
+	 * 角色ID
 	 */
-	@ApiModelProperty(value = "用户ID")
+	@ApiModelProperty(value = "角色ID")
 	private Long roleId;
 	/**
 	 * 手机号
@@ -37,4 +37,9 @@ public class BindRoleDto implements Serializable {
 	@ApiModelProperty(value = "是否可以操作")
 	private boolean disabled;
 
+	/**
+	 * 角色ID
+	 */
+	@ApiModelProperty(value = "角色ID")
+	private Long key;
 }

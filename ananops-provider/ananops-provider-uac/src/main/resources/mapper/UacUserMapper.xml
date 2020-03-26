@@ -247,15 +247,39 @@
     </select>
     <select id="selectUserList" parameterType="uacUser" resultType="uacUser">
         SELECT
-        <include refid="Base_Column_List"/>, g.id as groupId, g.group_name as groupName
+        <include refid="Base_Column_List"/>, g.id as groupId, g.group_name as groupName,
+        r.id as role_id, r.role_code as roleCode, r.role_name as roleName
         FROM
           an_uac_user u
         LEFT JOIN an_uac_group_user gu ON gu.user_id = u.id
         LEFT JOIN an_uac_group g ON g.id = gu.group_id
+        LEFT JOIN an_uac_role_user ru ON ru.user_id = u.id
+        LEFT JOIN an_uac_role r ON r.id = ru.role_id
         WHERE 1 = 1
-        <include refid="Base_Where_Condition">
-            <property name="alias" value="u"></property>
-        </include>
+        <if test="userName != null and userName != ''">
+            AND u.user_name LIKE concat('%',#{userName},'%')
+        </if>
+        <if test="loginName != null and loginName != ''">
+            AND u.login_name LIKE concat('%',#{loginName},'%')
+        </if>
+        <if test="mobileNo != null and mobileNo != ''">
+            AND u.mobile_no LIKE concat('%',#{mobileNo},'%')
+        </if>
+        <if test="groupId != null and groupId != ''">
+            AND g.id LIKE concat('%',#{groupId},'%')
+        </if>
+        <if test="roleId != null and roleId != ''">
+            AND g.id LIKE concat('%',#{roleId},'%')
+        </if>
+        <if test="roleCode != null and roleCode != ''">
+            AND g.id LIKE concat('%',#{roleCode},'%')
+        </if>
+        <if test="roleName != null and roleName != ''">
+            AND g.id LIKE concat('%',#{roleCode},'%')
+        </if>
+        <!--        <include refid="Base_Where_Condition">-->
+        <!--            <property name="alias" value="u"></property>-->
+        <!--        </include>-->
         <include refid="Base_OrderBy_Condition">
             <property name="alias" value="u"></property>
         </include>
@@ -279,6 +303,16 @@
             (r.id = #{superManagerRoleId}) AS disabled
         FROM an_uac_role r
     </select>
+
+    <select id="selectAllPermitBindRole" parameterType="java.lang.Integer" resultType="com.ananops.provider.model.dto.user.BindRoleDto">
+        SELECT
+            r.id as roleId,
+            r.role_code as roleCode,
+            r.role_name as roleName
+        FROM an_uac_role r
+        WHERE r.version = #{version}
+    </select>
+
   <select id="findUserInfoByLoginName" resultType="com.ananops.provider.model.domain.UacUser">
     SELECT
     <include refid="Base_Column_List"/>,
@@ -290,4 +324,16 @@
     LEFT JOIN an_uac_group g on gu.group_id = g.id
     WHERE u.login_name = #{loginName}
   </select>
+
+    <select id="batchGetUserInfo" parameterType="list" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from
+        an_uac_user u
+        WHERE
+        u.id IN
+        <foreach collection="userIdList" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

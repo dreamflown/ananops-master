@@ -11,11 +11,15 @@ public enum ItemStatusEnum {
 
     NO_SUCH_STATUS(-1,"没有这种状态"),
 
-    WAITING_FOR_INSPECTION(1,"等待巡检"),
+    WAITING_FOR_MAINTAINER(1,"巡检任务子项已创建，等待分配工程师"),
 
-    IN_THE_INSPECTION(2,"巡检工巡检中"),
+    WAITING_FOR_ACCEPT(2,"已分配工程师，等待工程师接单"),
 
-    INSPECTION_OVER(3,"该子项巡检结束，等待甲方负责人审核");
+    IN_THE_INSPECTION(3,"工程师已接单"),
+
+    INSPECTION_OVER(4,"巡检任务子项结束，等待甲方负责人审核"),
+
+    VERIFIED(5,"甲方负责人已经审核完毕");
     /**
      * The statusNum.
      */

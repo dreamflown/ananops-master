@@ -19,7 +19,7 @@
   <sql id="Base_Column_List">
     ${alias}.id,
     ${alias}.version,
-    ${alias}.aplication_name,
+    ${alias}.application_name,
     ${alias}.producer_code,
     ${alias}.producer_name,
     ${alias}.query_message_url,

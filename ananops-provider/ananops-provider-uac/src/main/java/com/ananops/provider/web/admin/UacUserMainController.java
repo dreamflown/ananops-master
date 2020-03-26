@@ -1,16 +1,20 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：UacUserMainController.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.web.admin;
 
+import com.ananops.provider.mapper.UacRoleMapper;
+import com.ananops.provider.model.domain.UacGroupUser;
+import com.ananops.provider.model.domain.UacRole;
+import com.ananops.provider.model.dto.log.PageLog;
+import com.ananops.provider.model.dto.user.*;
+import com.ananops.provider.model.service.UacUserFeignApi;
+import com.ananops.provider.model.vo.UserBindRoleNeedKeyVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ananops.base.dto.LoginAuthDto;
@@ -20,9 +24,6 @@ import com.ananops.core.support.BaseController;
 import com.ananops.provider.model.domain.UacLog;
 import com.ananops.provider.model.domain.UacUser;
 import com.ananops.provider.model.dto.menu.UserMenuDto;
-import com.ananops.provider.model.dto.user.BindUserMenusDto;
-import com.ananops.provider.model.dto.user.BindUserRolesDto;
-import com.ananops.provider.model.dto.user.ModifyUserStatusDto;
 import com.ananops.provider.model.exceptions.UacBizException;
 import com.ananops.provider.model.vo.UserBindRoleVo;
 import com.ananops.provider.security.SecurityUtils;
@@ -37,13 +38,12 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 用户管理主页面.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 @RestController
 @RequestMapping(value = "/user", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -51,19 +51,26 @@ import java.util.Objects;
 public class UacUserMainController extends BaseController {
 	@Resource
 	private UacUserService uacUserService;
+	@Resource
+	UacUserFeignApi uacUserFeignApi;
+	@Resource
+	UacRoleMapper uacRoleMapper;
 
 	/**
-	 * 查询角色列表.
+	 * 查询用户列表.
 	 *
 	 * @param uacUser the uac user
 	 *
 	 * @return the wrapper
 	 */
 	@PostMapping(value = "/queryListWithPage")
-	@ApiOperation(httpMethod = "POST", value = "查询角色列表")
-	public Wrapper<PageInfo> queryUserListWithPage(@ApiParam(name = "role", value = "角色信息") @RequestBody UacUser uacUser) {
+	@ApiOperation(httpMethod = "POST", value = "查询用户列表")
+	public Wrapper<PageInfo> queryUserListWithPage(@ApiParam(name = "role", value = "用户信息") @RequestBody UacUser uacUser) {
 
 		logger.info("查询用户列表uacUser={}", uacUser);
+		if(uacUser.getGroupId()==1){
+			uacUser.setGroupId(null);
+		}
 		PageInfo pageInfo = uacUserService.queryUserListWithPage(uacUser);
 		return WrapMapper.ok(pageInfo);
 	}
@@ -94,11 +101,11 @@ public class UacUserMainController extends BaseController {
 	 */
 	@PostMapping(value = "/queryUserLogListWithPage")
 	@ApiOperation(httpMethod = "POST", value = "分页查询用户操作日志列表")
-	public Wrapper<PageInfo<UacLog>> queryUserLogListWithPage(@ApiParam(name = "user", value = "用户信息") @RequestBody UacLog log) {
+	public Wrapper<PageInfo<UacLog>> queryUserLogListWithPage(@ApiParam(name = "user", value = "用户信息") @RequestBody PageLog log) {
 
 		logger.info("分页查询用户操作日志列表");
 		PageHelper.startPage(log.getPageNum(), log.getPageSize());
-		List<UacLog> list = uacUserService.queryUserLogListWithUserId(getLoginAuthDto().getUserId());
+		List<UacLog> list = uacUserService.queryUserLogListWithUserId(log.getUserId());
 		PageInfo<UacLog> pageInfo = new PageInfo<>(list);
 		return WrapMapper.ok(pageInfo);
 	}
@@ -149,11 +156,11 @@ public class UacUserMainController extends BaseController {
 	 */
 	@PostMapping(value = "/getBindRole/{userId}")
 	@ApiOperation(httpMethod = "POST", value = "获取用户绑定角色页面数据")
-	public Wrapper<UserBindRoleVo> getBindRole(@ApiParam(name = "userId", value = "角色id") @PathVariable Long userId) {
+	public Wrapper<UserBindRoleVo> getBindRole(@ApiParam(name = "userId", value = "用户id") @PathVariable Long userId) {
 		logger.info("获取用户绑定角色页面数据. userId={}", userId);
 		LoginAuthDto loginAuthDto = super.getLoginAuthDto();
 		Long currentUserId = loginAuthDto.getUserId();
-		if (!Objects.equals(userId, currentUserId)) {
+		if (Objects.equals(userId, currentUserId)) {
 			throw new UacBizException(ErrorCodeEnum.UAC10011023);
 		}
 
@@ -161,6 +168,47 @@ public class UacUserMainController extends BaseController {
 		return WrapMapper.ok(bindUserDto);
 	}
 
+	/**
+	 * 获取用户可以绑定角色页面数据.
+	 *
+	 * @param userId the user id
+	 *
+	 * @return the bind role
+	 */
+	@PostMapping(value = "/getPermitBindRole/{userId}")
+	@ApiOperation(httpMethod = "POST", value = "获取用户可以绑定角色页面数据")
+	public Wrapper<UserBindRoleNeedKeyVo> getPermitBindRole(@ApiParam(name = "userId", value = "用户id") @PathVariable Long userId) {
+		LoginAuthDto loginAuthDto = super.getLoginAuthDto();
+		Long currentUserId = loginAuthDto.getUserId();
+		if (Objects.equals(userId, currentUserId)) {
+			throw new UacBizException(ErrorCodeEnum.UAC10011023);
+		}
+		Wrapper<UserInfoDto> wrapper = uacUserFeignApi.getUacUserById(loginAuthDto.getUserId());
+		Long roleId = wrapper.getResult().getRoleId();
+        if (roleId == null) {
+            logger.error("当前登录用户currentUserId={}, 的用户为绑定角色", currentUserId);
+        }
+		UserBindRoleVo bindUserDto = uacUserService.getUserPermitBindRoleDto(userId,roleId);
+		UserBindRoleNeedKeyVo userBindRoleNeedKeyVo = new UserBindRoleNeedKeyVo();
+		for (BindRoleDto bindRoleDto : bindUserDto.getAllRoleSet()) {
+			bindRoleDto.setKey(bindRoleDto.getRoleId());
+		}
+		userBindRoleNeedKeyVo.setAllRoleSet(bindUserDto.getAllRoleSet());
+
+		List<BindRoleDto> bindRoleDtoList = new ArrayList<>();
+		for (Long aLong : bindUserDto.getAlreadyBindRoleIdSet()) {
+			BindRoleDto bindRoleDto = new BindRoleDto();
+			UacRole uacRole = uacRoleMapper.selectByPrimaryKey(aLong);
+			bindRoleDto.setRoleId(aLong);
+			bindRoleDto.setRoleCode(uacRole.getRoleCode());
+			bindRoleDto.setRoleName(uacRole.getRoleName());
+			bindRoleDto.setKey(aLong);
+			bindRoleDtoList.add(bindRoleDto);
+		}
+		Set<BindRoleDto> alreadyBindRoleVoSet = new HashSet<>(bindRoleDtoList);
+		userBindRoleNeedKeyVo.setAlreadyBindRoleSet(alreadyBindRoleVoSet);
+		return WrapMapper.ok(userBindRoleNeedKeyVo);
+	}
 	/**
 	 * 用户绑定角色.
 	 *
@@ -259,4 +307,18 @@ public class UacUserMainController extends BaseController {
 		return user == null ? null : new SecurityUser(user.getId(), user.getLoginName(), user.getLoginPwd(), user.getUserName(), user.getGroupId(), user.getGroupName());
 	}
 
+	/**
+	 * 用户绑定组织
+	 * @param uacGroupUser
+	 * @return
+	 */
+	@PostMapping(value = "/bindGroup")
+	@LogAnnotation
+	@ApiOperation(httpMethod = "POST", value = "用户绑定组织")
+	public Wrapper bindUserGroup(@ApiParam(value = "用户绑定组织") @RequestBody UacGroupUser uacGroupUser){
+		logger.info("用户绑定组织... uacGroupUser={}",uacGroupUser);
+		LoginAuthDto loginAuthDto = getLoginAuthDto();
+		uacUserService.bindUserGroup(uacGroupUser,loginAuthDto);
+		return WrapMapper.ok();
+	}
 }

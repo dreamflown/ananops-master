@@ -1,12 +1,9 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：UacUser.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.model.domain;
@@ -27,7 +24,7 @@ import java.util.Date;
 /**
  * The class Uac user.
  *
- * @author paascloud.net@gmail.com
+ * @author ananops.com@gmail.com
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -144,4 +141,18 @@ public class UacUser extends BaseEntity {
 	@ApiModelProperty(value = "用户所属的组织名称")
 	@Transient
 	private String groupName;
+
+	@ApiModelProperty(value = "用户所绑定的角色id")
+	@Transient
+	private Long roleId;
+
+	@ApiModelProperty(value = "用户所绑定的角色编码")
+	@Transient
+	private String roleCode;
+
+	@ApiModelProperty(value = "用户所绑定的角色名称")
+	@Transient
+	private String roleName;
+
+
 }

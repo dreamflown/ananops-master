@@ -1,25 +1,22 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：UserManager.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.manager;
 
+import com.ananops.provider.model.constant.RoleConstant;
+import com.ananops.provider.service.UacRoleGroupService;
 import com.google.common.base.Preconditions;
 import com.ananops.base.constant.GlobalConstant;
 import com.ananops.base.enums.ErrorCodeEnum;
 import com.ananops.provider.annotation.MqProducerStore;
-import com.ananops.provider.mapper.UacGroupUserMapper;
 import com.ananops.provider.mapper.UacRoleUserMapper;
 import com.ananops.provider.mapper.UacUserMapper;
 import com.ananops.provider.model.domain.MqMessageData;
-import com.ananops.provider.model.domain.UacGroupUser;
 import com.ananops.provider.model.domain.UacRoleUser;
 import com.ananops.provider.model.domain.UacUser;
 import com.ananops.provider.model.enums.MqSendTypeEnum;
@@ -34,18 +31,22 @@ import javax.annotation.Resource;
 /**
  * The class User manager.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 @Slf4j
 @Component
 @Transactional(rollbackFor = Exception.class)
 public class UserManager {
+
 	@Resource
 	private UacUserMapper uacUserMapper;
+
 	@Resource
 	private UacRoleUserMapper uacRoleUserMapper;
+
 	@Resource
-	private UacGroupUserMapper uacGroupUserMapper;
+	private UacRoleGroupService uacRoleGroupService;
+
 	@Resource
 	private RedisServiceImpl redisService;
 
@@ -58,6 +59,10 @@ public class UserManager {
 	public void register(final MqMessageData mqMessageData, final UacUser uacUser) {
 		log.info("注册用户. mqMessageData={}, user={}", mqMessageData, uacUser);
 		uacUserMapper.insertSelective(uacUser);
+		UacRoleUser uacRoleUser = new UacRoleUser();
+		uacRoleUser.setUserId(uacUser.getId());
+		uacRoleUser.setRoleId(GlobalConstant.Spc.SPC_MANAGER_ROLE_ID);
+		uacRoleUserMapper.insertSelective(uacRoleUser);
 	}
 
 	@MqProducerStore
@@ -67,7 +72,7 @@ public class UserManager {
 		if (updateResult < 1) {
 			log.error("用户【 {} 】重置密码失败", update.getLoginName());
 		} else {
-			log.info("用户【 {} 】重置密码失败", update.getLoginName());
+			log.info("用户【 {} 】重置密码成功", update.getLoginName());
 		}
 	}
 
@@ -81,19 +86,13 @@ public class UserManager {
 
 		// 绑定一个访客角色默认值roleId=10000
 		final Long userId = uacUser.getId();
+		final Long groupId = uacUser.getGroupId();
 		Preconditions.checkArgument(userId != null, "用戶Id不能爲空");
+		Preconditions.checkArgument(groupId != null, "组织Id不能爲空");
 
-		final Long roleId = 10000L;
+		// 为服务商管理员配置最初的服务商业务角色
+		uacRoleGroupService.saveRolesGroup(groupId, RoleConstant.FAC_DEFAULT_ROLE_IDS);
 
-		UacRoleUser roleUser = new UacRoleUser();
-		roleUser.setUserId(userId);
-		roleUser.setRoleId(roleId);
-		uacRoleUserMapper.insertSelective(roleUser);
-		// 绑定一个组织
-		UacGroupUser groupUser = new UacGroupUser();
-		groupUser.setUserId(userId);
-		groupUser.setGroupId(GlobalConstant.Sys.SUPER_MANAGER_GROUP_ID);
-		uacGroupUserMapper.insertSelective(groupUser);
 		// 删除 activeUserToken
 		redisService.deleteKey(activeUserKey);
 	}

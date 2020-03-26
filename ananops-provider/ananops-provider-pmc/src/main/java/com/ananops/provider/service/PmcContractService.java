@@ -39,9 +39,38 @@ public interface PmcContractService extends IService<PmcContract> {
     List<PmcContract> getContactListByGroupId(Long groupId);
 
     /**
+     * 根据甲方组织名模糊查询其对应的全部合同
+     * @param partyAName
+     * @return
+     */
+    List<PmcContract> getContractListByLikePartyAName(String partyAName);
+
+    /**
+     * 根据乙方组织名模糊查询其对应的全部合同
+     * @param partyBName
+     * @return
+     */
+    List<PmcContract> getContractListByLikePartyBName(String partyBName);
+
+    /**
      * 查询所有合同
      * @param baseQuery
      * @return
      */
     PageInfo getContractListWithPage(BaseQuery baseQuery);
+
+    /**
+     * 获取甲乙双方签订的合同
+     * @param partyAId
+     * @param partyBId
+     * @return
+     */
+    List<PmcContract> getContactByAB(Long partyAId, Long partyBId);
+
+    /**
+     * 获取合同总数
+     * @param groupId
+     * @return
+     */
+    int getContractCount(Long groupId);
 }

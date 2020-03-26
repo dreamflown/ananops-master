@@ -9,19 +9,23 @@ import com.ananops.base.exception.BusinessException;
  */
 public enum TaskStatusEnum {
 
-    NO_SUCH_STATUS(-1,"没有这种状态"),
+    NO_SUCH_STATUS(-1,"巡检任务被否决"),
 
-    WAITING_FOR_FACILITATOR(1,"等待服务商接单"),
+    WAITING_FOR_PRINCIPAL(0,"等待负责人审核"),
 
-    EXECUTING(2,"巡检任务执行中"),
+    WAITING_FOR_FACILITATOR(1,"等待分配服务商"),
 
-    WAITING_FOR_CONFIRM(3,"巡检结果待确认"),
+    WAITING_FOR_ACCEPT(2,"已分配服务商，等待服务商接单"),
 
-    WAITING_FOR_PAY(4,"巡检待付款"),
+    EXECUTING(3,"服务商已接单"),
 
-    WAITING_FOR_REVIEW(5,"巡检已付款，等待甲方负责人评价"),
+    WAITING_FOR_CONFIRM(4,"巡检完成，等待确认结果"),
 
-    INSPECTION_OVER(6,"已完成评价，巡检结束");
+    WAITING_FOR_PAY(5,"巡检结果已确认，等待付款"),
+
+    WAITING_FOR_REVIEW(6,"巡检已付款，等待甲方负责人评价"),
+
+    INSPECTION_OVER(7,"已完成评价，巡检结束");
 
     /**
      * The statusNum.

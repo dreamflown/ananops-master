@@ -15,11 +15,16 @@
     <modules>
         <module>ananops-provider-uac-api</module>
         <module>ananops-provider-mdc-api</module>
-        <module>ananops-provider-omc-api</module>
         <module>ananops-provider-opc-api</module>
         <module>ananops-provider-sdk-api</module>
         <module>ananops-provider-tpc-api</module>
         <module>ananops-provider-imc-api</module>
+        <module>ananops-provider-mdmc-api</module>
+        <module>ananops-provider-spc-api</module>
+        <module>ananops-provider-pmc-api</module>
+        <module>ananops-provider-bill-api</module>
+        <module>ananops-provider-activiti-api</module>
+        <module>ananops-provider-rdc-api</module>
     </modules>
 
     <dependencies>

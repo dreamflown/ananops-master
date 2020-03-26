@@ -1,32 +1,35 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：TpcMqProducerServiceImpl.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.service.impl;
 
+import com.ananops.base.dto.LoginAuthDto;
+import com.ananops.base.enums.ErrorCodeEnum;
 import com.ananops.core.support.BaseService;
+import com.ananops.provider.exceptions.TpcBizException;
 import com.ananops.provider.mapper.TpcMqProducerMapper;
 import com.ananops.provider.model.domain.TpcMqProducer;
+import com.ananops.provider.model.dto.AddMqProducerDto;
 import com.ananops.provider.model.vo.TpcMqProducerVo;
 import com.ananops.provider.model.vo.TpcMqPublishVo;
 import com.ananops.provider.service.TpcMqProducerService;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
  * The class Tpc mq producer service.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -34,6 +37,25 @@ public class TpcMqProducerServiceImpl extends BaseService<TpcMqProducer> impleme
 
 	@Resource
 	private TpcMqProducerMapper mdcMqProducerMapper;
+
+	@Override
+	public TpcMqProducer addProducer(AddMqProducerDto addMqProducerDto, LoginAuthDto loginAuthDto){
+		TpcMqProducer tpcMqProducer = new TpcMqProducer();
+		try {
+			BeanUtils.copyProperties(tpcMqProducer,addMqProducerDto);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		tpcMqProducer.setUpdateInfo(loginAuthDto);
+		int result = mdcMqProducerMapper.insert(tpcMqProducer);
+		if(result==1){
+			return tpcMqProducer;
+		}else{
+			throw new TpcBizException(ErrorCodeEnum.TPC100500017);
+		}
+	}
 
 	@Override
 	public List<TpcMqProducerVo> listProducerVoWithPage(TpcMqProducer mdcMqProducer) {

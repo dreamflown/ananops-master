@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2018. ananops.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.net All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：PcObjectMapper.java
- * 创建人：刘兆明
+ * 创建人：ananops
  * 联系方式：ananops.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+
+
+ *  * 平台官网: http://ananops.com
  */
 
 package com.ananops.core.config;
@@ -20,6 +20,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
 
 import java.util.List;
 
@@ -35,6 +37,17 @@ public class PcObjectMapper {
 
 	public static void buidMvcMessageConverter(List<HttpMessageConverter<?>> converters) {
 		MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+		jackson2HttpMessageConverter.setObjectMapper(getObjectMapper());
+		converters.add(jackson2HttpMessageConverter);
+	}
+
+	public static void buidMessageConverter(List<MessageConverter> converters) {
+		MappingJackson2MessageConverter jackson2MessageConverter = new MappingJackson2MessageConverter();
+		jackson2MessageConverter.setObjectMapper(getObjectMapper());
+		converters.add(jackson2MessageConverter);
+	}
+
+	public static ObjectMapper getObjectMapper() {
 		SimpleModule simpleModule = new SimpleModule();
 		simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
 		simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
@@ -44,8 +57,6 @@ public class PcObjectMapper {
 				.registerModule(new JavaTimeModule())
 				.registerModule(simpleModule);
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		jackson2HttpMessageConverter.setObjectMapper(objectMapper);
-		converters.add(jackson2HttpMessageConverter);
+		return objectMapper;
 	}
-
 }

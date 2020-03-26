@@ -2,6 +2,7 @@ package com.ananops.provider.model.dto;
 
 import com.ananops.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,5 +17,6 @@ public class TaskLogQueryDto extends BaseQuery {
     /**
      * 巡检任务Id
      */
+    @ApiModelProperty(value = "巡检任务ID")
     private Long taskId;
 }

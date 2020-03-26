@@ -1,12 +1,9 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：TpcMqTopicController.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.web.frontend;
@@ -15,7 +12,10 @@ import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.base.dto.UpdateStatusDto;
 import com.ananops.core.annotation.LogAnnotation;
 import com.ananops.core.support.BaseController;
+import com.ananops.provider.model.domain.TpcMqTag;
 import com.ananops.provider.model.domain.TpcMqTopic;
+import com.ananops.provider.model.dto.AddTopicDto;
+import com.ananops.provider.model.dto.TopicBindTagDto;
 import com.ananops.provider.model.vo.TpcMqTopicVo;
 import com.ananops.provider.service.TpcMqTopicService;
 import com.ananops.wrapper.WrapMapper;
@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * The class Tpc mq topic controller.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 @RestController
 @RequestMapping(value = "/topic", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -46,6 +46,26 @@ public class TpcMqTopicController extends BaseController {
 	@Resource
 	private TpcMqTopicService tpcMqTopicService;
 
+	/**
+	 * 添加主题
+	 * @param addTopicDto
+	 * @return
+	 */
+	@PostMapping(value = "/addMqTopic")
+	@ApiOperation(httpMethod = "POST", value = "新建MQ topic")
+	public Wrapper<TpcMqTopic> addMqTopic(@ApiParam(name = "topic", value = "MQ-Topic") @RequestBody AddTopicDto addTopicDto){
+		LoginAuthDto loginAuthDto = super.getLoginAuthDto();
+		logger.info("新建主题addTopicDto={}", addTopicDto);
+		return WrapMapper.ok(tpcMqTopicService.addMqTopic(addTopicDto,loginAuthDto));
+	}
+
+	@PostMapping(value = "/topicBindTag")
+	@ApiOperation(httpMethod = "POST", value = "为topic绑定tag")
+	public Wrapper<TpcMqTag> topicBindTag(@ApiParam(name = "tag", value = "MQ-Tag") @RequestBody TopicBindTagDto topicBindTagDto){
+		LoginAuthDto loginAuthDto = super.getLoginAuthDto();
+		logger.info("新建主题topicBindTag={}", topicBindTagDto);
+		return WrapMapper.ok(tpcMqTopicService.topicBindTag(topicBindTagDto,loginAuthDto));
+	}
 
 	/**
 	 * 查询MQ topic列表.

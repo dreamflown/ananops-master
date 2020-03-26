@@ -1,16 +1,14 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：OpcOssFeignApi.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.service;
 
+import com.ananops.provider.model.dto.attachment.OptAttachmentUpdateReqDto;
 import com.ananops.provider.model.dto.oss.*;
 import com.ananops.provider.service.hystrix.OpcOssFeignApiHystrix;
 import com.ananops.security.feign.OAuth2FeignAutoConfiguration;
@@ -29,7 +27,7 @@ import java.util.List;
 /**
  * The interface Opc oss feign api.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 @FeignClient(value = "ananops-provider-opc", configuration = OAuth2FeignAutoConfiguration.class, fallback = OpcOssFeignApiHystrix.class)
 public interface OpcOssFeignApi {
@@ -53,6 +51,26 @@ public interface OpcOssFeignApi {
 	 */
 	@PostMapping(value = "/api/opc/oss/getFileUrl")
 	Wrapper<String> getFileUrl(@RequestBody OptGetUrlRequest optGetUrlRequest);
+
+	/**
+	 * 更新附件关联单号
+	 *
+	 * @param optAttachmentUpdateReqDto 更新附件信息
+	 *
+	 * @return 返回空
+	 */
+	@PostMapping(value = "/api/opc/oss/updateAttachmentInfo")
+	Wrapper<String> updateAttachmentInfo(@RequestBody OptAttachmentUpdateReqDto optAttachmentUpdateReqDto);
+
+	/**
+	 * 批量更新附件关联单号
+	 *
+	 * @param optAttachmentUpdateReqDto 更新附件信息
+	 *
+	 * @return 返回空
+	 */
+	@PostMapping(value = "/api/opc/oss/batchUpdateAttachment")
+	Wrapper<String> batchUpdateAttachment(@RequestBody OptAttachmentUpdateReqDto optAttachmentUpdateReqDto);
 
 	/**
 	 * List file url wrapper.
@@ -83,7 +101,7 @@ public interface OpcOssFeignApi {
 	/**
 	 * The class Multipart support config.
 	 *
-	 * @author paascloud.net @gmail.com
+	 * @author ananops.com @gmail.com
 	 */
 	class MultipartSupportConfig {
 		/**

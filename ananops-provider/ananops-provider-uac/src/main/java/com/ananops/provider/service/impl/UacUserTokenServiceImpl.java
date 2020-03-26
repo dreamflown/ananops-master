@@ -2,6 +2,11 @@ package com.ananops.provider.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.ananops.base.constant.GlobalConstant;
+import com.ananops.provider.mapper.UacGroupMapper;
+import com.ananops.provider.model.dto.role.BindUserDto;
+import com.ananops.provider.model.vo.GroupZtreeVo;
+import com.ananops.provider.service.UacGroupService;
 import com.arronlong.httpclientutil.HttpClientUtil;
 import com.arronlong.httpclientutil.common.HttpConfig;
 import com.arronlong.httpclientutil.common.HttpHeader;
@@ -38,30 +43,40 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
 /**
  * The class Uac user token service.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class UacUserTokenServiceImpl extends BaseService<UacUserToken> implements UacUserTokenService {
+
 	@Resource
 	private UacUserTokenMapper uacUserTokenMapper;
+
 	@Resource
 	private UacUserService uacUserService;
+
+	@Resource
+	private UacGroupService uacGroupService;
+
+	@Resource
+	private UacGroupMapper uacGroupMapper;
+
 	@Autowired
 	private SecurityProperties securityProperties;
+
 	@Resource
 	private RedisTemplate<String, Object> redisTemplate;
+
 	@Resource
 	private OpcRpcService opcRpcService;
+
 	@Value("${ananops.auth.refresh-token-url}")
 	private String refreshTokenUrl;
 
@@ -134,21 +149,36 @@ public class UacUserTokenServiceImpl extends BaseService<UacUserToken> implement
 	}
 
 	@Override
-	public PageInfo listTokenWithPage(TokenMainQueryDto token) {
-		PageHelper.startPage(token.getPageNum(), token.getPageSize());
+	public PageInfo listTokenWithPage(TokenMainQueryDto token, LoginAuthDto loginAuthDto) {
 		UacUserToken userToken = new UacUserToken();
 		userToken.setStatus(token.getStatus());
+		userToken.setPageNum(token.getPageNum());
+		userToken.setPageSize(token.getPageSize());
 		if (token.getStatus() != null) {
 			userToken.setStatus(token.getStatus());
 		}
-
 		if (StringUtils.isNotBlank(token.getLoginName())) {
 			userToken.setLoginName(token.getLoginName());
 		}
 		if (StringUtils.isNotBlank(token.getUserName())) {
 			userToken.setUserName(token.getUserName());
 		}
-		List<UacUserToken> userTokenList = uacUserTokenMapper.selectTokenList(userToken);
+		// 查询所有用户包括已禁用的用户
+		Set<BindUserDto> allUserSet = new HashSet<>();
+		// 查询该组织下所有用户包括已禁用的用户
+		List<GroupZtreeVo> groupZtreeVos = uacGroupService.getGroupTree(loginAuthDto.getGroupId());
+		for (GroupZtreeVo groupZtreeVo : groupZtreeVos) {
+			List<BindUserDto> bindUserDtoList = uacGroupMapper.selectAllUserByGroupId(GlobalConstant.Sys.SUPER_MANAGER_ROLE_ID, groupZtreeVo.getId(), loginAuthDto.getGroupId());
+			allUserSet.addAll(bindUserDtoList);
+		}
+
+		// 获取该组织下所有用户Id
+		List<Long> userIds = new ArrayList<>();
+		for (BindUserDto bindUserDto : allUserSet) {
+			userIds.add(bindUserDto.getUserId());
+		}
+		PageHelper.startPage(token.getPageNum(), token.getPageSize());
+		List<UacUserToken> userTokenList = uacUserTokenMapper.selectTokenListInUserIds(userToken, userIds);
 		return new PageInfo<>(userTokenList);
 	}
 

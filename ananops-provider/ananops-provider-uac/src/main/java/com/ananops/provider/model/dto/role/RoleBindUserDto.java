@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * The class Role bind user dto.
  *
- * @author paascloud.net@gmail.com
+ * @author ananops.com@gmail.com
  */
 @Data
 @ApiModel(value = "角色绑定用户")
@@ -27,5 +27,5 @@ public class RoleBindUserDto implements Serializable {
 	 * 已经绑定的用户集合
 	 */
 	@ApiModelProperty(value = "已经绑定的用户集合")
-	private Set<Long> alreadyBindUserIdSet;
+	private Set<BindUserDto> alreadyBindUserIdSet;
 }

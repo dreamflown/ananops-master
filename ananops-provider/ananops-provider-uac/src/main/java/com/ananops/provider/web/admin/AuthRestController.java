@@ -1,16 +1,15 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：AuthRestController.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.web.admin;
 
+import com.ananops.provider.model.dto.company.CompanyRegisterDto;
+import com.ananops.provider.service.*;
 import com.google.common.base.Preconditions;
 import com.ananops.base.dto.CheckValidDto;
 import com.ananops.core.annotation.OperationLogDto;
@@ -18,16 +17,13 @@ import com.ananops.core.support.BaseController;
 import com.ananops.provider.model.constant.UacApiConstant;
 import com.ananops.provider.model.domain.UacUser;
 import com.ananops.provider.model.dto.user.ResetLoginPwdDto;
-import com.ananops.provider.model.user.UserRegisterDto;
+import com.ananops.provider.model.dto.user.UserRegisterDto;
 import com.ananops.provider.model.enums.UacUserStatusEnum;
-import com.ananops.provider.service.EmailService;
-import com.ananops.provider.service.SmsService;
-import com.ananops.provider.service.UacLogService;
-import com.ananops.provider.service.UacUserService;
 import com.ananops.wrapper.WrapMapper;
 import com.ananops.wrapper.Wrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -39,20 +35,27 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 不认证的URL请求.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 @RestController
 @RequestMapping(value = "/auth")
 @Api(value = "Web-AuthRestController", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class AuthRestController extends BaseController {
+
 	@Resource
 	private UacUserService uacUserService;
+
 	@Resource
 	private SmsService smsService;
+
 	@Resource
 	private EmailService emailService;
+
 	@Resource
 	private UacLogService uacLogService;
+
+	@Resource
+	private UacCompanyService uacCompanyService;
 
 	/**
 	 * 校验手机号码.
@@ -186,6 +189,21 @@ public class AuthRestController extends BaseController {
 	@ApiOperation(httpMethod = "POST", value = "注册用户")
 	public Wrapper registerUser(UserRegisterDto user) {
 		uacUserService.register(user);
+		return WrapMapper.ok();
+	}
+
+	/**
+	 * 注册一个服务商
+	 *
+	 * @param company 初始注册信息
+	 *
+	 * @return the Wrapper
+	 */
+	@PostMapping(value = "/company/registCompany")
+	@ApiOperation(httpMethod = "POST", value = "注册服务商")
+	public Wrapper registerSpcCompany(@ApiParam(name = "company", value = "服务商信息") @RequestBody CompanyRegisterDto company) {
+		logger.info("注册服务商");
+		uacCompanyService.register(company);
 		return WrapMapper.ok();
 	}
 

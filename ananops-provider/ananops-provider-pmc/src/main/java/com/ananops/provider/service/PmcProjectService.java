@@ -4,6 +4,7 @@ import com.ananops.base.dto.BaseQuery;
 import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.core.support.IService;
 import com.ananops.provider.model.domain.PmcProject;
+import com.ananops.provider.model.domain.PmcProjectUser;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public interface PmcProjectService extends IService<PmcProject> {
      */
     PmcProject getProjectById(Long id);
 
+    List<PmcProjectUser> queryProUserByProjectId(Long projectId);
+
     /**
      * 删除项目信息
      * @param id
@@ -45,4 +48,42 @@ public interface PmcProjectService extends IService<PmcProject> {
      * @return
      */
     PageInfo getProjectListWithPage(BaseQuery baseQuery);
+
+
+    /**
+     * 获取某个用户的项目列表
+     * @param userId
+     * @return
+     */
+    List<PmcProject> getProjectByUserId(Long userId);
+
+    /**
+     * 添加项目用户信息
+     * @param pmcProjectUser
+     * @return
+     */
+    int addProUser(PmcProjectUser pmcProjectUser);
+
+    /**
+     *删除项目用户关联信息
+     * @param
+     * @return
+     */
+    int deleteProUser(Long ProjectId);
+
+    int deleteProUser2(PmcProjectUser pmcProjectUser);
+
+    /**
+     * 根据项目id获取工程师id列表
+     * @param projectId
+     * @return
+     */
+    List<Long> getEngineersIdByProjectId(Long projectId);
+
+    /**
+     * 获取项目总数
+     * @param groupId
+     * @return
+     */
+    int getProjectCount(Long groupId);
 }

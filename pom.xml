@@ -11,13 +11,13 @@
         <module>ananops-provider-api</module>
         <module>ananops-common</module>
         <module>ananops-provider</module>
-        <module>ananops-generator</module>
         <module>ananops-eureka</module>
         <module>ananops-discovery</module>
         <module>ananops-gateway</module>
         <module>ananops-monitor</module>
         <module>ananops-zipkin</module>
         <module>elastic-job-lite-starter-parent</module>
+        <module>ananops-websocket</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -98,7 +98,7 @@
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
-            <!-- paas cloud start -->
+            <!-- ananops cloud start -->
             <dependency>
                 <groupId>com.ananops.common</groupId>
                 <artifactId>ananops-common-base</artifactId>
@@ -124,7 +124,7 @@
                 <artifactId>ananops-security-app</artifactId>
                 <version>${ananops.version}</version>
             </dependency>
-            <!-- paas cloud end -->
+            <!-- ananops cloud end -->
             <!-- swagger cloud start -->
             <dependency>
                 <groupId>io.springfox</groupId>
@@ -246,7 +246,13 @@
             <dependency>
                 <groupId>com.xiaoleilu</groupId>
                 <artifactId>hutool-all</artifactId>
-                <version>3.0.7</version>
+                <version>3.3.2</version>
+<!--            <version>3.0.7</version>-->
+            </dependency>
+            <dependency>
+                <groupId>com.ananops.provider.api</groupId>
+                <artifactId>ananops-provider-pmc-api</artifactId>
+                <version>${ananops.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ananops.provider.api</groupId>
@@ -256,11 +262,6 @@
             <dependency>
                 <groupId>com.ananops.provider.api</groupId>
                 <artifactId>ananops-provider-mdc-api</artifactId>
-                <version>${ananops.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.ananops.provider.api</groupId>
-                <artifactId>ananops-provider-omc-api</artifactId>
                 <version>${ananops.version}</version>
             </dependency>
             <dependency>
@@ -276,6 +277,16 @@
             <dependency>
                 <groupId>com.ananops.provider.api</groupId>
                 <artifactId>ananops-provider-sdk-api</artifactId>
+                <version>${ananops.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ananops.provider.api</groupId>
+                <artifactId>ananops-provider-activiti-api</artifactId>
+                <version>${ananops.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ananops.provider.api</groupId>
+                <artifactId>ananops-provider-bill-api</artifactId>
                 <version>${ananops.version}</version>
             </dependency>
             <dependency>
@@ -314,6 +325,11 @@
                 <groupId>com.qiniu</groupId>
                 <artifactId>qiniu-java-sdk</artifactId>
                 <version>[7.0.0, 7.2.99]</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>3.8.0</version>
             </dependency>
             <!-- alipay start-->
             <dependency>

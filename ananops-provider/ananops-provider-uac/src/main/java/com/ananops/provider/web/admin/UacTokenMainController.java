@@ -1,16 +1,14 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：UacTokenMainController.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.web.admin;
 
+import com.ananops.base.dto.LoginAuthDto;
 import com.github.pagehelper.PageInfo;
 import com.ananops.core.support.BaseController;
 import com.ananops.provider.model.dto.token.TokenMainQueryDto;
@@ -32,7 +30,7 @@ import javax.annotation.Resource;
 /**
  * token主页面.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 @RestController
 @RequestMapping(value = "/token", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -53,7 +51,8 @@ public class UacTokenMainController extends BaseController {
 	@ApiOperation(httpMethod = "POST", value = "查询在线用户列表")
 	public Wrapper queryUacActionListWithPage(@ApiParam(name = "token") @RequestBody TokenMainQueryDto token) {
 		logger.info("查询在线用户列表. token={}", token);
-		PageInfo pageInfo = uacUserTokenService.listTokenWithPage(token);
+		LoginAuthDto loginAuthDto = getLoginAuthDto();
+		PageInfo pageInfo = uacUserTokenService.listTokenWithPage(token, loginAuthDto);
 		return WrapMapper.ok(pageInfo);
 	}
 }

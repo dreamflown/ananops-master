@@ -1,16 +1,14 @@
 /*
- * Copyright (c) 2018. paascloud.net All Rights Reserved.
- * 项目名称：paascloud快速搭建企业级分布式微服务平台
+ * Copyright (c) 2019. ananops.com All Rights Reserved.
+ * 项目名称：ananops平台
  * 类名称：TpcMqProducerController.java
- * 创建人：刘兆明
- * 联系方式：paascloud.net@gmail.com
- * 开源地址: https://github.com/paascloud
- * 博客地址: http://blog.paascloud.net
- * 项目官网: http://paascloud.net
+ * 创建人：ananops
+ * 平台官网: http://ananops.com
  */
 
 package com.ananops.provider.web.frontend;
 
+import com.ananops.provider.model.dto.AddMqProducerDto;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ananops.base.dto.LoginAuthDto;
@@ -36,7 +34,7 @@ import java.util.List;
 /**
  * 生产者管理.
  *
- * @author paascloud.net @gmail.com
+ * @author ananops.com @gmail.com
  */
 @RestController
 @RequestMapping(value = "/producer", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -45,6 +43,14 @@ public class TpcMqProducerController extends BaseController {
 
 	@Resource
 	private TpcMqProducerService tpcMqProducerService;
+
+	@PostMapping(value = "/addProducer")
+	@ApiOperation(httpMethod = "POST", value = "创建一个生产者")
+	public Wrapper<TpcMqProducer> addProducer(@ApiParam(name = "producer", value = "Mq生产者") @RequestBody AddMqProducerDto addMqProducerDto){
+		LoginAuthDto loginAuthDto = super.getLoginAuthDto();
+		logger.info("创建生产者addMqProducerDto={}",addMqProducerDto);
+		return WrapMapper.ok(tpcMqProducerService.addProducer(addMqProducerDto,loginAuthDto));
+	}
 
 	/**
 	 * 查询生产者列表.
