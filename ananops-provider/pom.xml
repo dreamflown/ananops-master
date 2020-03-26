@@ -28,6 +28,7 @@
         <module>ananops-provider-payment</module>
         <module>ananops-provider-amc</module>
         <module>ananops-provider-rdc</module>
+        <module>ananops-provider-console</module>
     </modules>
 
     <properties>

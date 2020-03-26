@@ -2,12 +2,9 @@ package com.ananops.provider.core.aspect;
 
 import com.ananops.PubUtils;
 import com.ananops.base.dto.LoginAuthDto;
-import com.ananops.base.enums.ErrorCodeEnum;
-import com.ananops.base.exception.BusinessException;
 import com.ananops.core.utils.RequestUtil;
 import com.ananops.provider.core.annotation.AnanLogAnnotation;
 import com.ananops.provider.model.domain.*;
-import com.ananops.provider.model.domain.elasticsearchDo.ImcTaskLog;
 import com.ananops.provider.model.dto.*;
 import com.ananops.provider.model.enums.TaskStatusEnum;
 import com.ananops.provider.service.*;
@@ -20,7 +17,6 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import tk.mybatis.mapper.entity.Example;
@@ -51,9 +47,6 @@ public class AnanLogAspect {
     SpcCompanyFeignApi spcCompanyFeignApi;
     @Resource
     SpcEngineerFeignApi spcEngineerFeignApi;
-
-    @Autowired
-    ElasticsearchService elasticsearchService;
 
     private ThreadLocal<Date> threadLocal = new ThreadLocal<>();
 
@@ -340,31 +333,15 @@ public class AnanLogAspect {
      */
     public ImcInspectionTaskLog createTaskLog(Long taskId,Integer status,Date startTime,Date endTime,String movement,String os,String browser,String ipAddress){//创建一条任务的日志
         ImcInspectionTaskLog imcInspectionTaskLog = new ImcInspectionTaskLog();
-        ImcTaskLog imcTaskLog = new ImcTaskLog();
-
         imcInspectionTaskLog.setTaskId(taskId);
-        imcTaskLog.setTaskId(taskId);
         imcInspectionTaskLog.setStatus(status);
-        imcTaskLog.setStatus(status);
         imcInspectionTaskLog.setCreatedTime(startTime);
-        imcTaskLog.setCreatedTime(startTime);
         imcInspectionTaskLog.setUpdateTime(endTime);
-        imcTaskLog.setUpdateTime(endTime);
         imcInspectionTaskLog.setMovement(movement);
-        imcTaskLog.setMovement(movement);
         imcInspectionTaskLog.setStatusTimestamp(endTime);
-        imcTaskLog.setStatusTimestamp(endTime);
         imcInspectionTaskLog.setOs(os);
-        imcTaskLog.setOs(os);
         imcInspectionTaskLog.setBrowser(browser);
-        imcTaskLog.setBrowser(browser);
         imcInspectionTaskLog.setIpAddress(ipAddress);
-        imcTaskLog.setIpAddress(ipAddress);
-        try{
-            elasticsearchService.save(imcTaskLog);
-        }catch (Exception e){
-            throw new BusinessException(ErrorCodeEnum.GL9999082);
-        }
         return imcInspectionTaskLog;
     }
 

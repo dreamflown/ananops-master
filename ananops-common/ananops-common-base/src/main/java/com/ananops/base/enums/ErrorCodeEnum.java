@@ -965,6 +965,17 @@ public enum ErrorCodeEnum {
 	WEBSOCKET10100001(10100001,"消息推送失败"),
 
 	WEBSOCKET10100002(10100002,"查无此消息"),
+
+    /**
+     * Console error code enum 1011
+     */
+    CONSOLE10110000(10110000,"不存在此字典库，dictId=%s"),
+
+    CONSOLE10110001(10110001,"不存在此字典项，dictItemId=%s"),
+
+    CONSOLE10110002(10110002,"字典库id不能是空"),
+
+    CONSOLE10110003(10110003,"字典项id不能是空"),
 	;
 	private int code;
 	private String msg;
