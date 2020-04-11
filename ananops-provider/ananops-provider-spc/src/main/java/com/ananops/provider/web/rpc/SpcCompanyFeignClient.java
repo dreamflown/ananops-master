@@ -37,7 +37,7 @@ public class SpcCompanyFeignClient extends BaseController implements SpcCompanyF
     @ApiOperation(httpMethod = "POST", value = "根据服务商Id获取服务商")
     public Wrapper<Integer> getCompanyById(@RequestBody CompanyDto companyDto) {
         logger.info("查询服务商. companyDto={}", companyDto);
-        Preconditions.checkArgument(!PubUtils.isNull(companyDto, companyDto.getId()), ErrorCodeEnum.MDC10021021.msg());
+        Preconditions.checkArgument(!PubUtils.isNull(companyDto, companyDto.getId()), ErrorCodeEnum.SPC100850020.msg());
         int result = spcCompanyService.getCompanyById(companyDto);
         return WrapMapper.ok(result);
     }
@@ -48,5 +48,15 @@ public class SpcCompanyFeignClient extends BaseController implements SpcCompanyF
         logger.info("查询服务商详情. companyId={}", companyId);
         CompanyVo companyVo = spcCompanyService.queryByCompanyId(companyId);
         return WrapMapper.ok(companyVo);
+    }
+
+    @Override
+    @ApiOperation(httpMethod = "POST", value = "注册一个新的服务商")
+    public Wrapper<Integer> registerNewCompany(@RequestBody CompanyDto companyDto) {
+        logger.info("服务商初始注册. companyDto={}", companyDto);
+        Preconditions.checkArgument(!PubUtils.isNull(companyDto, companyDto.getUserId()), ErrorCodeEnum.UAC10011001.msg());
+        Preconditions.checkArgument(!PubUtils.isNull(companyDto, companyDto.getGroupId()), ErrorCodeEnum.UAC10015010.msg());
+        int result = spcCompanyService.registerNew(companyDto);
+        return WrapMapper.ok(result);
     }
 }

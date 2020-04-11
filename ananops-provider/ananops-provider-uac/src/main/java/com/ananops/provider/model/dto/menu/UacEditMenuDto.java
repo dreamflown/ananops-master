@@ -61,4 +61,9 @@ public class UacEditMenuDto implements Serializable {
 	 */
 	@ApiModelProperty(value = "备注说明")
 	private String remark;
+	/**
+	 * 状态
+	 */
+	@ApiModelProperty(value = "菜单状态")
+	private String status;
 }

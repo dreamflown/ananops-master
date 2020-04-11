@@ -59,7 +59,7 @@ public interface UacUserTokenService extends IService<UacUserToken> {
 	 *
 	 * @return the page info
 	 */
-	PageInfo listTokenWithPage(TokenMainQueryDto token);
+	PageInfo listTokenWithPage(TokenMainQueryDto token, LoginAuthDto loginAuthDto);
 
 	/**
 	 * 刷新token.

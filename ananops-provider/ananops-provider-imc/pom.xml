@@ -37,6 +37,14 @@
         </dependency>
         <dependency>
             <groupId>com.ananops.provider.api</groupId>
+            <artifactId>ananops-provider-tpc-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ananops.provider.api</groupId>
+            <artifactId>ananops-provider-opc-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ananops.provider.api</groupId>
             <artifactId>ananops-provider-imc-api</artifactId>
             <version>1.0</version>
         </dependency>
@@ -135,6 +143,16 @@
             <groupId>com.ananops</groupId>
             <artifactId>elastic-job-lite-starter</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.10</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext-asian</artifactId>
+            <version>5.2.0</version>
         </dependency>
     </dependencies>
 

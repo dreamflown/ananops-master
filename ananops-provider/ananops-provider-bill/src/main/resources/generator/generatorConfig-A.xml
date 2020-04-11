@@ -19,34 +19,27 @@
                         connectionURL="${jdbc.url}" userId="${jdbc.user}" password="${jdbc.password}">
         </jdbcConnection>
 
-        <!-- 生成模型的包名和位置 -->
-        <javaModelGenerator targetPackage="com.ananops.provider.model.domain"
-                            targetProject="src/main/java">
-            <!--如果true，MBG会根据catalog和schema来生成子包。如果false就会直接用targetPackage属性-->
-            <property name="enableSubPackages" value="false"/>
-            <!--是否对数据库查询结果进行trim操作-->
-            <property name="trimStrings" value="true"/>
-            <!--该属性用来配置实体类属性是否可变，如果设置为true，-->
-            <!--那么constructorBased不管设置成什么，都会使用构造方法入参，并且不会生成setter方法-->
-            <property name="immutable" value="true"/>
-        </javaModelGenerator>
+        <javaModelGenerator targetPackage="${targetModelPackage}"
+                            targetProject="${targetJavaProject}"/>
 
-        <!-- 生成映射文件的包名和位置 -->
-        <sqlMapGenerator targetPackage="resources/mappers"
-                         targetProject="src/main"/>
+        <sqlMapGenerator targetPackage="${targetXMLPackage}"
+                         targetProject="${targetResourcesProject}"/>
 
-        <!-- 生成DAO的包名和位置 -->
-        <javaClientGenerator targetPackage="com.ananops.provider.mapper"
-                             targetProject="src/main/java" type="XMLMAPPER"/>
+        <javaClientGenerator targetPackage="${targetMapperPackage}"
+                             targetProject="${targetJavaProject}" type="XMLMAPPER"/>
 
         <!-- 设置要生成代码的表 -->
-        <table tableName="task_item" domainObjectName="TaskItem">
-            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        </table>
-
-        <!--<table tableName="mdmc_task_item" domainObjectName="MdmcTaskItem">-->
+        <!--<table tableName="tbl_rmc_warehouse_area" domainObjectName="RmcWarehouseArea">-->
             <!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
         <!--</table>-->
+        <!--<table tableName="tbl_rmc_device_detail" domainObjectName="RmcDeviceDetail">-->
+            <!--<generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+        <!--</table>-->
+
+
+        <table tableName="an_bmc_bill" domainObjectName="BmcBill">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
 
         </context>
     </generatorConfiguration>

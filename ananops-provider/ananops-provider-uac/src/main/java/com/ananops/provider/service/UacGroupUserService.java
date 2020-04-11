@@ -55,4 +55,13 @@ public interface UacGroupUserService extends IService<UacGroupUser> {
 	 * @param groupId the group id
 	 */
 	void saveUserGroup(Long id, Long groupId);
+
+	/**
+	 * 根据用户Id查找其所属公司对应的GroupID
+	 *
+	 * @param userId
+	 *
+	 * @return
+	 */
+	Long queryCompanyGroupIdByUserId(Long userId);
 }

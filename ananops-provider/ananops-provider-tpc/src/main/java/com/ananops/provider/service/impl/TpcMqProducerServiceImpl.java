@@ -8,16 +8,22 @@
 
 package com.ananops.provider.service.impl;
 
+import com.ananops.base.dto.LoginAuthDto;
+import com.ananops.base.enums.ErrorCodeEnum;
 import com.ananops.core.support.BaseService;
+import com.ananops.provider.exceptions.TpcBizException;
 import com.ananops.provider.mapper.TpcMqProducerMapper;
 import com.ananops.provider.model.domain.TpcMqProducer;
+import com.ananops.provider.model.dto.AddMqProducerDto;
 import com.ananops.provider.model.vo.TpcMqProducerVo;
 import com.ananops.provider.model.vo.TpcMqPublishVo;
 import com.ananops.provider.service.TpcMqProducerService;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -31,6 +37,25 @@ public class TpcMqProducerServiceImpl extends BaseService<TpcMqProducer> impleme
 
 	@Resource
 	private TpcMqProducerMapper mdcMqProducerMapper;
+
+	@Override
+	public TpcMqProducer addProducer(AddMqProducerDto addMqProducerDto, LoginAuthDto loginAuthDto){
+		TpcMqProducer tpcMqProducer = new TpcMqProducer();
+		try {
+			BeanUtils.copyProperties(tpcMqProducer,addMqProducerDto);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		tpcMqProducer.setUpdateInfo(loginAuthDto);
+		int result = mdcMqProducerMapper.insert(tpcMqProducer);
+		if(result==1){
+			return tpcMqProducer;
+		}else{
+			throw new TpcBizException(ErrorCodeEnum.TPC100500017);
+		}
+	}
 
 	@Override
 	public List<TpcMqProducerVo> listProducerVoWithPage(TpcMqProducer mdcMqProducer) {

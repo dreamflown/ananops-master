@@ -1,12 +1,16 @@
 package com.ananops.provider.model.service;
 
+import com.ananops.provider.model.dto.group.CompanyDto;
+import com.ananops.provider.model.dto.group.GroupNameLikeQuery;
 import com.ananops.provider.model.dto.group.GroupSaveDto;
 import com.ananops.provider.model.dto.group.GroupStatusDto;
+import com.ananops.provider.model.vo.GroupZtreeVo;
 import com.ananops.provider.model.dto.user.IdStatusDto;
 import com.ananops.provider.model.service.hystrix.UacGroupFeignHystrix;
 import com.ananops.security.feign.OAuth2FeignAutoConfiguration;
 import com.ananops.wrapper.Wrapper;
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,7 +63,7 @@ public interface UacGroupFeignApi {
      * @return the wrapper
      */
     @PostMapping(value = "/api/uac/group/getUacGroupByLikeName")
-    Wrapper<List<GroupSaveDto>> getUacGroupByLikeName(@RequestParam("groupName") String groupName);
+    Wrapper<List<GroupSaveDto>> getUacGroupByLikeName(@RequestBody GroupNameLikeQuery groupNameLikeQuery);
 
     /**
      * 根据Group Id查询UacUserIdList
@@ -70,4 +74,20 @@ public interface UacGroupFeignApi {
      */
     @PostMapping(value = "/api/uac/group/getUacUsersByGroupId")
     Wrapper<List<Long>> getUacUserIdListByGroupId(@RequestParam("groupId")Long groupId);
+
+    /**
+     * 根据组织Id查询组织列表
+     * @param groupId
+     * @return
+     */
+    @PostMapping(value = "/api/uac/group/getGroupTreeById/{groupId}")
+    Wrapper<List<GroupZtreeVo>> getGroupTreeById(@PathVariable("groupId") Long groupId);
+
+    /**
+     * 通过组织ID查询其所在公司信息
+     * @param groupId
+     * @return
+     */
+    @PostMapping(value = "/api/uac/group/getCompanyInfoById/{groupId}")
+    Wrapper<CompanyDto> getCompanyInfoById(@PathVariable("groupId") Long groupId);
 }

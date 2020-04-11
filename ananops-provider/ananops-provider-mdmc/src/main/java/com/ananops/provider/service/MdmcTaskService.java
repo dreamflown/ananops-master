@@ -2,23 +2,32 @@ package com.ananops.provider.service;
 
 import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.core.support.IService;
-import com.ananops.provider.model.domain.MdmcReview;
 import com.ananops.provider.model.domain.MdmcTask;
-import com.ananops.provider.model.domain.MdmcTaskLog;
 import com.ananops.provider.model.dto.*;
+import com.ananops.provider.model.dto.oss.ElementImgUrlDto;
+import com.ananops.provider.model.dto.oss.OptUploadFileReqDto;
+import com.ananops.provider.model.dto.oss.OptUploadFileRespDto;
+import com.github.pagehelper.PageInfo;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 
 
 public interface MdmcTaskService extends IService<MdmcTask> {
 
-    /**
+    /**   旧版本
      * 根据维修工单ID获取工单详情
      * @param taskId
      * @return
      */
     MdmcTask getTaskByTaskId(Long taskId);
 
+    /**
+     * 根据维修工单ID获取工单详情
+     * @param taskId
+     * @return
+     */
+    MdmcTaskDetailDto getTaskDetail(Long taskId);
     /**
      * 创建/编辑/处理维修工单
      * @param mdmcAddTaskDto
@@ -27,6 +36,26 @@ public interface MdmcTaskService extends IService<MdmcTask> {
      */
     MdmcAddTaskDto saveTask(MdmcAddTaskDto mdmcAddTaskDto, LoginAuthDto loginAuthDto);
 
+    /**
+     * 根据用户负责人id获取值机员列表
+     * @param userId
+     * @return
+     */
+    List<MdmcUserWatcherDto> getUserWatcherList(Long userId);
+    /**
+     * 录入故障类型和故障位置列表
+     * @param addTroubleInfoDto
+     * @param loginAuthDto
+     * @return
+     */
+    MdmcAddTroubleInfoDto saveTroubleList(MdmcAddTroubleInfoDto addTroubleInfoDto,LoginAuthDto loginAuthDto);
+
+    /**
+     * 根据用户id获取故障类型列表和故障位置列表
+     * @param userId
+     * @return
+     */
+    MdmcAddTroubleInfoDto getTroubleList(Long userId, LoginAuthDto loginAuthDto);
     /**
      * 工程师提交维修信息
      * @param mdmcTaskDto
@@ -43,11 +72,6 @@ public interface MdmcTaskService extends IService<MdmcTask> {
      */
     MdmcTask modifyTaskStatus(MdmcChangeStatusDto changeStatusDto, LoginAuthDto loginAuthDto);
 
-    @Deprecated
-    Void FacilitatorTransfer();
-
-    @Deprecated
-    Void MaintainerTransfer();
 
     /**
      * 根据状态查询维修工单列表
@@ -82,7 +106,14 @@ public interface MdmcTaskService extends IService<MdmcTask> {
      * @param queryDto
      * @return
      */
-    MdmcPageDto getTaskListByPage(MdmcQueryDto queryDto);
+    PageInfo getTaskListByPage(MdmcQueryDto queryDto);
+
+    /**
+     * 根据用户ID获取工单数目
+     * @param userId
+     * @return
+     */
+    int getTaskCount(Long userId);
 
     /**
      * 分配工程师
@@ -118,6 +149,34 @@ public interface MdmcTaskService extends IService<MdmcTask> {
      * @param target
      */
     void copyPropertiesWithIgnoreNullProperties(Object source, Object target);
+
+    /**
+     * 上传公司相关文件
+     *
+     * @param multipartRequest
+     *
+     * @param optUploadFileReqDto
+     *
+     * @param loginAuthDto
+     *
+     *
+     * @return
+     */
+    List<OptUploadFileRespDto> uploadTaskFile(MultipartHttpServletRequest multipartRequest, OptUploadFileReqDto optUploadFileReqDto, LoginAuthDto loginAuthDto);
+
+    /**
+     * 根据工单id和状态查看附件信息
+     * @param mdmcFileReqDto
+     * @return
+     */
+    List<ElementImgUrlDto> getFileByTaskIdAndStatus(MdmcFileReqDto mdmcFileReqDto);
+
+    /**
+     * 根据工单id和状态查看附件信息
+     * @param taskId
+     * @return
+     */
+    List<MdmcFileUrlDto> getFileByTaskId(Long taskId);
 
     /**
      * =========================== 待优化 ============================

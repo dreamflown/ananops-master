@@ -9,6 +9,7 @@
 package com.ananops.provider.web.admin;
 
 import com.ananops.provider.mapper.UacRoleMapper;
+import com.ananops.provider.model.domain.UacGroupUser;
 import com.ananops.provider.model.domain.UacRole;
 import com.ananops.provider.model.dto.log.PageLog;
 import com.ananops.provider.model.dto.user.*;
@@ -183,7 +184,11 @@ public class UacUserMainController extends BaseController {
 			throw new UacBizException(ErrorCodeEnum.UAC10011023);
 		}
 		Wrapper<UserInfoDto> wrapper = uacUserFeignApi.getUacUserById(loginAuthDto.getUserId());
-		UserBindRoleVo bindUserDto = uacUserService.getUserPermitBindRoleDto(userId,wrapper.getResult().getRoleId());
+		Long roleId = wrapper.getResult().getRoleId();
+        if (roleId == null) {
+            logger.error("当前登录用户currentUserId={}, 的用户为绑定角色", currentUserId);
+        }
+		UserBindRoleVo bindUserDto = uacUserService.getUserPermitBindRoleDto(userId,roleId);
 		UserBindRoleNeedKeyVo userBindRoleNeedKeyVo = new UserBindRoleNeedKeyVo();
 		for (BindRoleDto bindRoleDto : bindUserDto.getAllRoleSet()) {
 			bindRoleDto.setKey(bindRoleDto.getRoleId());
@@ -302,4 +307,18 @@ public class UacUserMainController extends BaseController {
 		return user == null ? null : new SecurityUser(user.getId(), user.getLoginName(), user.getLoginPwd(), user.getUserName(), user.getGroupId(), user.getGroupName());
 	}
 
+	/**
+	 * 用户绑定组织
+	 * @param uacGroupUser
+	 * @return
+	 */
+	@PostMapping(value = "/bindGroup")
+	@LogAnnotation
+	@ApiOperation(httpMethod = "POST", value = "用户绑定组织")
+	public Wrapper bindUserGroup(@ApiParam(value = "用户绑定组织") @RequestBody UacGroupUser uacGroupUser){
+		logger.info("用户绑定组织... uacGroupUser={}",uacGroupUser);
+		LoginAuthDto loginAuthDto = getLoginAuthDto();
+		uacUserService.bindUserGroup(uacGroupUser,loginAuthDto);
+		return WrapMapper.ok();
+	}
 }

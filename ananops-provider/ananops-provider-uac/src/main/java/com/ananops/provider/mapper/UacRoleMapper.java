@@ -11,6 +11,7 @@ package com.ananops.provider.mapper;
 import com.ananops.core.mybatis.MyMapper;
 import com.ananops.provider.model.domain.UacRole;
 import com.ananops.provider.model.dto.role.BindUserDto;
+import com.ananops.provider.model.dto.role.QueryGroupRoleDto;
 import com.ananops.provider.model.vo.RoleVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -43,6 +44,24 @@ public interface UacRoleMapper extends MyMapper<UacRole> {
 	 * @return the list
 	 */
 	List<RoleVo> queryRoleListWithPage(UacRole role);
+
+	/**
+	 * 基于角色Id批量查询角色List
+	 *
+	 * @param role the role
+	 *
+	 * @return the list
+	 */
+	List<RoleVo> queryRoleListWithBatchRoleId(List<Long> roleIds);
+
+	/**
+	 * 批量查询角色List,增加筛选条件
+	 *
+	 * @param role the role
+	 *
+	 * @return the list
+	 */
+	List<RoleVo> queryRoleListWithQueryGroupRoleDto(@Param("queryGroupRoleDto") QueryGroupRoleDto queryGroupRoleDto);
 
 	/**
 	 * Select all role info by user id list.

@@ -1,10 +1,8 @@
 package com.ananops.provider.model.dto;
 
-import com.ananops.provider.model.domain.MdmcTask;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -12,10 +10,11 @@ import java.util.List;
 @ApiModel
 public class MdmcListDto implements Serializable {
 
+    private static final long serialVersionUID = 390810165348427102L;
     @ApiModelProperty("状态")
     private Integer status;
 
     @ApiModelProperty("工单列表")
-    private List<MdmcTask> taskList;
+    private List<MdmcTaskListDto> taskList;
 
 }

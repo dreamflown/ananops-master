@@ -22,6 +22,11 @@ public class SpcCompanyFeignHystrix implements SpcCompanyFeignApi {
     }
 
     @Override
+    public Wrapper<Integer> registerNewCompany(@RequestBody CompanyDto companyDto) {
+        return null;
+    }
+
+    @Override
     public Wrapper<CompanyVo> getCompanyDetailsById(@PathVariable(value = "companyId") Long companyId){
         return null;
     }

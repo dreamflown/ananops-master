@@ -147,4 +147,15 @@ public class UacRoleUserServiceImpl extends BaseService<UacRoleUser> implements 
 			throw new UacBizException(ErrorCodeEnum.UAC10012006, roleId);
 		}
 	}
+
+	@Override
+	public List<Long> listByRoleIdUserIds(Long roleId, List<Long> userIds) {
+		if (roleId == null) {
+			throw new UacBizException(ErrorCodeEnum.UAC10012001);
+		}
+		if (PublicUtil.isEmpty(userIds)) {
+			throw new UacBizException(ErrorCodeEnum.UAC10011001);
+		}
+		return uacRoleUserMapper.listByRoleIdUserIds(roleId, userIds);
+	}
 }

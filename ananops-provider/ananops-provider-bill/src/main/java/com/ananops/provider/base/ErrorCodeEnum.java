@@ -438,7 +438,7 @@ public enum ErrorCodeEnum {
     /**
      * Omc 10031010 error code enum.
      */
-    OMC10031010(10031010, "非快乐学习网的订单, 回调忽略"),
+    OMC10031010(10031010, "非安安运维平台的订单, 回调忽略"),
     /**
      * Omc 10031011 error code enum.
      */

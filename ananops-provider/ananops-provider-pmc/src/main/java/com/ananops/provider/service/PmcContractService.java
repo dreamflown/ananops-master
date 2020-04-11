@@ -66,4 +66,11 @@ public interface PmcContractService extends IService<PmcContract> {
      * @return
      */
     List<PmcContract> getContactByAB(Long partyAId, Long partyBId);
+
+    /**
+     * 获取合同总数
+     * @param groupId
+     * @return
+     */
+    int getContractCount(Long groupId);
 }

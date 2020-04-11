@@ -139,6 +139,57 @@
         </if>
         <include refid="Base_OrderBy_Condition"></include>
     </select>
+    <select id="queryRoleListWithBatchRoleId" parameterType="list" resultType="com.ananops.provider.model.vo.RoleVo">
+        SELECT
+        tur.id AS id,
+        tur.version AS version,
+        tur.role_code AS roleCode,
+        tur.role_name AS roleName,
+        tur.status AS status,
+        tur.remark AS remark,
+        tur.creator AS creator,
+        tur.creator_id AS creatorId,
+        tur.created_time AS createdTime,
+        tur.last_operator AS lastOperator,
+        tur.last_operator_id AS lastOperatorId,
+        tur.update_time AS updateTime
+        FROM an_uac_role tur
+        WHERE 1 = 1 AND tur.id IN
+        <foreach collection="list" index="index" item="item" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="queryRoleListWithQueryGroupRoleDto"  resultType="com.ananops.provider.model.vo.RoleVo">
+        SELECT
+        tur.id AS id,
+        tur.version AS version,
+        tur.role_code AS roleCode,
+        tur.role_name AS roleName,
+        tur.status AS status,
+        tur.remark AS remark,
+        tur.creator AS creator,
+        tur.creator_id AS creatorId,
+        tur.created_time AS createdTime,
+        tur.last_operator AS lastOperator,
+        tur.last_operator_id AS lastOperatorId,
+        tur.update_time AS updateTime
+        FROM an_uac_role tur
+        WHERE 1 = 1 AND tur.id IN
+        <foreach collection="queryGroupRoleDto.roleIds" index="index" item="item" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="queryGroupRoleDto.status != null and queryGroupRoleDto.status != ''">
+            AND tur.status = #{queryGroupRoleDto.status}
+        </if>
+        <if test="queryGroupRoleDto.roleCode != null and queryGroupRoleDto.roleCode != ''">
+            AND tur.role_code LIKE concat('%',#{queryGroupRoleDto.roleCode},'%')
+        </if>
+        <if test="queryGroupRoleDto.roleName != null and queryGroupRoleDto.roleName != ''">
+            AND tur.role_name LIKE concat('%',#{queryGroupRoleDto.roleName},'%')
+        </if>
+    </select>
     <select id="selectAllRoleInfoByUserId" resultMap="BaseResultMap">
         SELECT
             r.id,

@@ -8,15 +8,15 @@
 
 package com.ananops.provider.manager;
 
+import com.ananops.provider.model.constant.RoleConstant;
+import com.ananops.provider.service.UacRoleGroupService;
 import com.google.common.base.Preconditions;
 import com.ananops.base.constant.GlobalConstant;
 import com.ananops.base.enums.ErrorCodeEnum;
 import com.ananops.provider.annotation.MqProducerStore;
-import com.ananops.provider.mapper.UacGroupUserMapper;
 import com.ananops.provider.mapper.UacRoleUserMapper;
 import com.ananops.provider.mapper.UacUserMapper;
 import com.ananops.provider.model.domain.MqMessageData;
-import com.ananops.provider.model.domain.UacGroupUser;
 import com.ananops.provider.model.domain.UacRoleUser;
 import com.ananops.provider.model.domain.UacUser;
 import com.ananops.provider.model.enums.MqSendTypeEnum;
@@ -37,12 +37,16 @@ import javax.annotation.Resource;
 @Component
 @Transactional(rollbackFor = Exception.class)
 public class UserManager {
+
 	@Resource
 	private UacUserMapper uacUserMapper;
+
 	@Resource
 	private UacRoleUserMapper uacRoleUserMapper;
+
 	@Resource
-	private UacGroupUserMapper uacGroupUserMapper;
+	private UacRoleGroupService uacRoleGroupService;
+
 	@Resource
 	private RedisServiceImpl redisService;
 
@@ -82,19 +86,13 @@ public class UserManager {
 
 		// 绑定一个访客角色默认值roleId=10000
 		final Long userId = uacUser.getId();
+		final Long groupId = uacUser.getGroupId();
 		Preconditions.checkArgument(userId != null, "用戶Id不能爲空");
+		Preconditions.checkArgument(groupId != null, "组织Id不能爲空");
 
-		final Long roleId = 10000L;
+		// 为服务商管理员配置最初的服务商业务角色
+		uacRoleGroupService.saveRolesGroup(groupId, RoleConstant.FAC_DEFAULT_ROLE_IDS);
 
-		UacRoleUser roleUser = new UacRoleUser();
-		roleUser.setUserId(userId);
-		roleUser.setRoleId(roleId);
-		uacRoleUserMapper.insertSelective(roleUser);
-		// 绑定一个组织
-		UacGroupUser groupUser = new UacGroupUser();
-		groupUser.setUserId(userId);
-		groupUser.setGroupId(GlobalConstant.Sys.SUPER_MANAGER_GROUP_ID);
-		uacGroupUserMapper.insertSelective(groupUser);
 		// 删除 activeUserToken
 		redisService.deleteKey(activeUserKey);
 	}

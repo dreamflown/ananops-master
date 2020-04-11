@@ -37,11 +37,12 @@ public class ImcTaskManager {
     }
 
     @MqProducerStore
-    public void modifyTaskStatus(final MqMessageData mqMessageData,ImcInspectionTask imcInspectionTask){
-        log.info("修改巡检任务状态. mqMessageData={},imcTaskChangeStatusDto={}",mqMessageData,imcInspectionTask);
-        int result = imcInspectionTaskMapper.updateByPrimaryKeySelective(imcInspectionTask);
-        if(result < 1){
-            throw new BusinessException(ErrorCodeEnum.GL9999092);
-        }
+    public void modifyTaskStatus(final MqMessageData mqMessageData){
+        log.info("修改巡检任务状态. mqMessageData={}",mqMessageData);
+    }
+
+    @MqProducerStore
+    public void notifyFacilitator(final MqMessageData mqMessageData){
+        log.info("通知服务商. mqMessageData={}",mqMessageData);
     }
 }

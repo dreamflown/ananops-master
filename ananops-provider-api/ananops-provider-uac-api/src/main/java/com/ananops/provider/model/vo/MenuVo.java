@@ -69,13 +69,16 @@ public class MenuVo implements Serializable {
 	 * 序号
 	 */
 	@ApiModelProperty("序号")
-	private String number;
+	private Integer number;
 
 	/**
 	 * 备注(研发中心)
 	 */
 	@ApiModelProperty("备注(研发中心)")
 	private String remark;
+
+	@ApiModelProperty("状态")
+	private String status;
 
 	/**
 	 * 删除标识
@@ -87,5 +90,7 @@ public class MenuVo implements Serializable {
 	private List<MenuVo> subMenu;
 
 	private boolean hasMenu = false;
+
+	private Long key;
 
 }

@@ -13,9 +13,7 @@ import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.core.annotation.LogAnnotation;
 import com.ananops.core.support.BaseController;
 import com.ananops.provider.model.dto.user.UserModifyPwdDto;
-import com.ananops.provider.model.dto.user.UserRegisterDto;
 import com.ananops.provider.service.UacUserService;
-import com.ananops.wrapper.WrapMapper;
 import com.ananops.wrapper.Wrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -61,6 +59,29 @@ public class UacUserPasswordController extends BaseController {
 		LoginAuthDto loginAuthDto = getLoginAuthDto();
 
 		int result = uacUserService.userModifyPwd(userModifyPwdDto, loginAuthDto);
+		return handleResult(result);
+	}
+
+	/**
+	 * 普通用户修改密码
+	 *
+	 * @param userModifyPwdDto the user modify pwd dto
+	 *
+	 * @return the wrapper
+	 */
+	@PostMapping(value = "/authUserModifyPwd")
+	@LogAnnotation
+	@ApiOperation(httpMethod = "POST", value = "普通用户修改个人密码")
+	public Wrapper<Integer> authUserModifyPwd(@ApiParam(name = "userModifyPwdDto", value = "普通用户修改密码Dto") @RequestBody UserModifyPwdDto userModifyPwdDto) {
+		logger.info("==》vue用户修改密码, userModifyPwdDto={}", userModifyPwdDto);
+
+		logger.info("旧密码 oldPassword = {}", userModifyPwdDto.getOldPassword());
+		logger.info("新密码 newPassword = {}", userModifyPwdDto.getNewPassword());
+		logger.info("登录名 loginName = {}", userModifyPwdDto.getLoginName());
+
+		LoginAuthDto loginAuthDto = getLoginAuthDto();
+
+		int result = uacUserService.authUserModifyPwd(userModifyPwdDto, loginAuthDto);
 		return handleResult(result);
 	}
 

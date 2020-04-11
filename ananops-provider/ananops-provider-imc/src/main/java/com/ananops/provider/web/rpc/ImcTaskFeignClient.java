@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -191,6 +192,22 @@ public class ImcTaskFeignClient extends BaseController implements ImcTaskFeignAp
         List<ItemDto> itemDtoList = getItemList(taskId);
         taskDto.setItemDtoList(itemDtoList);
         return WrapMapper.ok(taskDto);
+    }
+
+    @Override
+    @ApiOperation(httpMethod = "POST", value = "根据巡检任务的ID列表查看对应的全部巡检任务的详情")
+    public Wrapper<List<TaskDto>> getImcTaskList(@PathVariable Long[] imcTaskIdList){
+        List<TaskDto> imcTaskList = new ArrayList<>();
+        for(int i=0;i<imcTaskIdList.length;i++){
+            Long taskId = imcTaskIdList[i];
+            TaskDto taskDto = new TaskDto();
+            ImcInspectionTask imcInspectionTask = imcInspectionTaskService.getTaskByTaskId(taskId);
+            BeanUtils.copyProperties(imcInspectionTask,taskDto);
+            List<ItemDto> itemDtoList = getItemList(taskId);
+            taskDto.setItemDtoList(itemDtoList);
+            imcTaskList.add(taskDto);
+        }
+        return WrapMapper.ok(imcTaskList);
     }
 
     @Override

@@ -25,7 +25,9 @@ import java.io.Serializable;
 @Table(name = "an_uac_role_user")
 @Alias(value = "uacRoleUser")
 public class UacRoleUser implements Serializable {
+
 	private static final long serialVersionUID = -4598936929315554832L;
+
 	@Id
 	@Column(name = "role_id")
 	private Long roleId;

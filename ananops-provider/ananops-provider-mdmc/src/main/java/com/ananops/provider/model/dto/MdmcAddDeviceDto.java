@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @ApiModel
 public class MdmcAddDeviceDto implements Serializable {
+    private static final long serialVersionUID = -1474257885342952974L;
     @ApiModelProperty(value = "备品备件ID")
     private Long id;
 

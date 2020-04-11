@@ -36,6 +36,8 @@
       <arg column="objectId" jdbcType="BIGINT" javaType="java.lang.Long" />
       <arg column="addressName" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="result" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="trouble_reason" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="delay_reason" jdbcType="VARCHAR" javaType="java.lang.String" />
     </constructor>
   </resultMap>
   <resultMap id="IDResultMap" type="com.ananops.provider.model.domain.MdmcTask">

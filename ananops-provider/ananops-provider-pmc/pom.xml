@@ -26,6 +26,14 @@
         </dependency>
         <dependency>
             <groupId>com.ananops.provider.api</groupId>
+            <artifactId>ananops-provider-uac-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ananops.provider.api</groupId>
+            <artifactId>ananops-provider-opc-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ananops.provider.api</groupId>
             <artifactId>ananops-provider-pmc-api</artifactId>
         </dependency>
         <dependency>
@@ -36,11 +44,11 @@
             <groupId>com.ananops.provider.api</groupId>
             <artifactId>ananops-provider-tpc-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>ch.netzwerg</groupId>
-            <artifactId>paleo-core</artifactId>
-            <version>0.10.2</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>ch.netzwerg</groupId>-->
+            <!--<artifactId>paleo-core</artifactId>-->
+            <!--<version>0.10.2</version>-->
+        <!--</dependency>-->
         <!--<dependency>-->
             <!--<groupId>io.github.swagger2markup</groupId>-->
             <!--<artifactId>swagger2markup</artifactId>-->

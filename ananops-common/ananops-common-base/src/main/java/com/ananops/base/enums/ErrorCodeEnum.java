@@ -8,107 +8,230 @@ package com.ananops.base.enums;
  * @author ananops.net @gmail.com
  */
 public enum ErrorCodeEnum {
+
+	//9998 维修维护数据中心
 	/**
-	 * Gl 9999084 error code enum.
+	 * MDMC 9998084 error code enum.
 	 */
+
+	MDMC9998084(9998084,"当前状态不允许服务商审批"),
+	/**
+	 * MDMC 9998085 error code enum.
+	 */
+	MDMC9998085(9998085,"当前状态不允许服务商接单"),
+	/**
+	 * MDMC 9998086 error code enum.
+	 */
+	MDMC9998086(9998086,"当前状态不允许服务商拒单"),
+	/**
+	 * MDMC 9998087 error code enum.
+	 */
+	MDMC9998087(9998087,"当前状态不允许工程师拒单"),
+	/**
+	 * MDMC 9998088 error code enum.
+	 */
+	MDMC9998088(9998088,"更新巡检任务子项失败"),
+	/**
+	 * MDMC 9998089 error code enum.
+	 */
+	MDMC9998089(9998089,"没有此角色"),
+	/**
+	 * MDMC 9998090 error code enum.
+	 */
+	MDMC9998090(9998090,"没有处于此状态的任务子项"),
+	/**
+	 * MDMC 9998091 error code enum.
+	 */
+	MDMC9998091(9998091,"没有处于此状态的任务"),
+	/**
+	 * MDMC 9998092 error code enum.
+	 */
+	MDMC9998092(9998092,"修改巡检任务状态失败"),
+	/**
+	 * MDMC 9998093 error code enum.
+	 */
+	MDMC9998093(9998093,"更新巡检任务失败"),
+	/**
+	 * MDMC 9998094 error code enum.
+	 */
+	MDMC9998094(9998094,"任务子项不存在此状态"),
+	/**
+	 * MDMC 9998095 error code enum.
+	 */
+	MDMC9998095(9998095,"任务不存在此状态"),
+	/**
+	 * MDMC 9998096 error code enum.
+	 */
+	MDMC9998096(9998096,"当前备品备件订单不存在"),
+	/**
+	 * MDMC 9998097 error code enum.
+	 */
+	MDMC9998097(9998097,"当前任务子项不存在,itemId=%s"),
+	/**
+	 * MDMC 9998098 error code enum.
+	 */
+	MDMC9998098(9998098,"当前任务不存在,taskId=%s"),
+	/**
+	 * MDMC 9998099 error code enum.
+	 */
+	MDMC9998099(9998099,"不能重复评论"),
+	/**
+	 * MDMC 99980100 error code enum.
+	 */
+	MDMC99980100(9998100, "参数异常"),
+	/**
+	 * MDMC 99980401 error code enum.
+	 */
+	MDMC99980401(99980401, "无访问权限"),
+	/**
+	 * MDMC 000500 error code enum.
+	 */
+	MDMC99980500(500, "未知异常"),
+	/**
+	 * MDMC 000403 error code enum.
+	 */
+	MDMC99980403(9998403, "无权访问"),
+	/**
+	 * MDMC 000404 error code enum.
+	 */
+	MDMC9998404(9998404, "找不到指定资源"),
+	/**
+	 * MDMC 99980001 error code enum.
+	 */
+	MDMC99980001(99980001, "注解使用错误"),
+	/**
+	 * MDMC 99980002 error code enum.
+	 */
+	MDMC99980002(99980002, "微服务不在线,或者网络超时"),
+	/**
+	 * MDMC 99980003 error code enum.
+	 */
+	MDMC99980003(99980003,"用户id不能为空"),
+
+	/**
+	 * MDMC 99980004 error code enum.
+	 */
+	MDMC99980004(99980004,"任务id不能为空"),
+
+
+	/**
+	 * MDMC 99980005 error code enum.
+	 */
+	MDMC99980005(99980005,"故障类型和故障位置内容不能为空"),
+
+	/**
+	 * MDMC 99980006 error code enum.
+	 */
+	MDMC99980006(99980006,"找不到发送消息的对象"),
+
+	/**
+	 * gl 9999084 error code enum.
+	 */
+	
 	GL9999084(9999084,"当前状态不允许服务商审批"),
 	/**
-	 * Gl 9999085 error code enum.
+	 * GL 9999085 error code enum.
 	 */
 	GL9999085(9999085,"当前状态不允许服务商接单"),
 	/**
-	 * Gl 9999086 error code enum.
+	 * GL 9999086 error code enum.
 	 */
 	GL9999086(9999086,"当前状态不允许服务商拒单"),
 	/**
-	 * Gl 9999087 error code enum.
+	 * GL 9999087 error code enum.
 	 */
 	GL9999087(9999087,"当前状态不允许工程师拒单"),
 	/**
-	 * Gl 9999088 error code enum.
+	 * GL 9999088 error code enum.
 	 */
 	GL9999088(9999088,"更新巡检任务子项失败"),
 	/**
-	 * Gl 9999089 error code enum.
+	 * GL 9999089 error code enum.
 	 */
 	GL9999089(9999089,"没有此角色"),
 	/**
-	 * Gl 9999090 error code enum.
+	 * GL 9999090 error code enum.
 	 */
 	GL9999090(9999090,"没有处于此状态的任务子项"),
 	/**
-	 * Gl 9999091 error code enum.
+	 * GL 9999091 error code enum.
 	 */
 	GL9999091(9999091,"没有处于此状态的任务"),
 	/**
-	 * Gl 9999092 error code enum.
+	 * GL 9999092 error code enum.
 	 */
 	GL9999092(9999092,"修改巡检任务状态失败"),
 	/**
-	 * Gl 9999093 error code enum.
+	 * GL 9999093 error code enum.
 	 */
 	GL9999093(9999093,"更新巡检任务失败"),
 	/**
-	 * Gl 9999094 error code enum.
+	 * GL 9999094 error code enum.
 	 */
 	GL9999094(9999094,"任务子项不存在此状态"),
 	/**
-	 * Gl 9999095 error code enum.
+	 * GL 9999095 error code enum.
 	 */
 	GL9999095(9999095,"任务不存在此状态"),
 	/**
-	 * Gl 9999096 error code enum.
+	 * GL 9999096 error code enum.
 	 */
 	GL9999096(9999096,"当前备品备件订单不存在"),
 	/**
-	 * Gl 9999097 error code enum.
+	 * GL 9999097 error code enum.
 	 */
 	GL9999097(9999097,"当前任务子项不存在"),
 	/**
-	 * Gl 9999098 error code enum.
+	 * GL 9999098 error code enum.
 	 */
 	GL9999098(9999098,"当前任务不存在"),
 	/**
-	 * Gl 9999099 error code enum.
+	 * GL 9999099 error code enum.
 	 */
 	GL9999099(9999099,"不能重复评论"),
 	/**
-	 * Gl 99990100 error code enum.
+	 * GL 99990100 error code enum.
 	 */
 	GL99990100(9999100, "参数异常"),
 	/**
-	 * Gl 99990401 error code enum.
+	 * GL 99990401 error code enum.
 	 */
 	GL99990401(99990401, "无访问权限"),
 	/**
-	 * Gl 000500 error code enum.
+	 * GL 000500 error code enum.
 	 */
 	GL99990500(500, "未知异常"),
 	/**
-	 * Gl 000403 error code enum.
+	 * GL 000403 error code enum.
 	 */
 	GL99990403(9999403, "无权访问"),
 	/**
-	 * Gl 000404 error code enum.
+	 * GL 000404 error code enum.
 	 */
 	GL9999404(9999404, "找不到指定资源"),
 	/**
-	 * Gl 99990001 error code enum.
+	 * GL 99990001 error code enum.
 	 */
 	GL99990001(99990001, "注解使用错误"),
 	/**
-	 * Gl 99990002 error code enum.
+	 * GL 99990002 error code enum.
 	 */
 	GL99990002(99990002, "微服务不在线,或者网络超时"),
 	/**
-	 * MDMC 99990003 error code enum.
+	 * GL 99990003 error code enum.
 	 */
 	GL99990003(99990003,"用户id不能为空"),
 
 	/**
-	 * MDMC 99990004 error code enum.
+	 * GL 99990004 error code enum.
 	 */
 	GL99990004(99990004,"任务id不能为空"),
+
+
+	/**
+	 * GL 99990004 error code enum.
+	 */
+	GL99990005(99990005,"故障类型和故障位置内容不能为空"),
 
 	/**
 	 * Uac 10010001 error code enum.
@@ -210,15 +333,15 @@ public enum ErrorCodeEnum {
 	/**
 	 * Uac 10011024 error code enum.
 	 */
-	UAC10011024(10011024, "找不到绑定的用户, userId=%"),
+	UAC10011024(10011024, "找不到绑定的用户, userId=%s"),
 	/**
 	 * Uac 10011025 error code enum.
 	 */
-	UAC10011025(10011025, "用户已存在, loginName=%"),
+	UAC10011025(10011025, "用户已存在, loginName=%s"),
 	/**
 	 * Uac 10011026 error code enum.
 	 */
-	UAC10011026(10011026, "更新用户失败, userId=%"),
+	UAC10011026(10011026, "更新用户失败, userId=%s"),
 	/**
 	 * Uac 10011027 error code enum.
 	 */
@@ -405,6 +528,23 @@ public enum ErrorCodeEnum {
 	 */
 	UAC10015009(10015009, "找不到上级组织, groupId=%s"),
 	/**
+	 * Uac 10015010 error code enum.
+	 */
+	UAC10015010(10015010, "组织ID不能为空, groupId=%s"),
+	/**
+	 * Uac 10015011 error code enum.
+	 */
+	UAC10015011(10015011, "组织名称不能为空, groupName=%s"),
+	/**
+	 * Uac 10015012 error code enum.
+	 */
+	UAC10015012(10015012, "组织类型不能为空, groupType=%s"),
+
+	UAC10015013(10015013, "更新权限信息失败, apiId=%s"),
+
+
+
+	/**
 	 * Mdc 10021001 error code enum.
 	 */
 // 1002 数据中心
@@ -452,7 +592,7 @@ public enum ErrorCodeEnum {
 	/**
 	 * Mdc 10021024 error code enum.
 	 */
-	MDC10021024(10021024, "商品编码不能为空"),
+	MDC10021028(10021024, "商品编码不能为空"),
 
 	/**
 	 * Mdc 10023001 error code enum.
@@ -476,6 +616,30 @@ public enum ErrorCodeEnum {
 	 * Mdc 10021023 error code enum.
 	 */
 	MDC10021023(10021023, "删除商品信息失败, productId=%s"),
+
+	MDC10021024(10021024,"不存在此字典库，dictId=%s"),
+
+	MDC10021025(10021025,"不存在此字典项，dictItemId=%s"),
+
+	MDC10021026(10021026,"字典库id不能是空"),
+
+	MDC10021027(10021027,"字典项id不能是空"),
+
+	MDC10021029(10021029,"字典库类型为系统类型，不允许删除！"),
+
+	MDC10021030(10021030,"字典项类型为系统类型，不支持删除！"),
+
+	MDC10021031(10021031,"字典库类型为系统类型，不允许更改！"),
+
+	MDC10021032(10021032,"字典项类型为系统类型，不允许更改！"),
+
+	MDC10021033(10021033,"字典库名称不能是空"),
+
+	MDC10021034(10021034,"字典项名称不能是空"),
+
+	MDC10021035(10021035,"字典项编码不能是空"),
+
+	MDC10021036(10021036,"字典项排序码不能是空"),
 	/**
 	 * Omc 10031001 error code enum.
 	 */
@@ -516,7 +680,7 @@ public enum ErrorCodeEnum {
 	/**
 	 * Omc 10031010 error code enum.
 	 */
-	OMC10031010(10031010, "非快乐学习网的订单, 回调忽略"),
+	OMC10031010(10031010, "非安安运维平台的订单, 回调忽略"),
 	/**
 	 * Omc 10031011 error code enum.
 	 */
@@ -644,6 +808,30 @@ public enum ErrorCodeEnum {
 	 * Tpc 100500015 error code enum.
 	 */
 	TPC100500015(10050015, "消息PID不能为空, messageKey=%s"),
+	/**
+	 * Tpc 100500016 error code enum
+	 */
+	TPC100500016(10050016,"consumer创建失败"),
+	/**
+	 * Tpc 100500017 error code enum
+	 */
+	TPC100500017(10050017,"producer创建失败"),
+	/**
+	 * Tpc 100500018 error code enum
+	 */
+	TPC100500018(10050018,"topic创建失败"),
+	/**
+	 * Tpc 100500019 error code enum
+	 */
+	TPC100500019(10050019,"topic绑定tag失败"),
+	/**
+	 * Tpc 100500020 error code enum
+	 */
+	TPC100500020(10050020,"无此消费者"),
+	/**
+	 * Tpc 100500021 error code enum
+	 */
+	TPC100500021(10050021,"无此topic"),
 
 	//1008 项目管理
 	/**
@@ -700,6 +888,16 @@ public enum ErrorCodeEnum {
 	 */
 	PMC10081025(10081025, "更新失败, InspectDetailId=%s"),
 
+	/**
+	 * Pmc 10021026 error code enum.
+	 */
+	PMC10081026(10081026, "公司组织Id不能为空"),
+
+	/**
+	 * Pmc 10021027 error code enum.
+	 */
+	PMC10081027(10081027, "该合同下包含项目，请先删除关联项目, contractId=%s"),
+
 	//报警管理 1009
 	/**
 	 * Amc 10091011 error code enum.
@@ -750,7 +948,41 @@ public enum ErrorCodeEnum {
 	 * Spc 100850019 error code enum.
 	 */
 	SPC100850019(100850019, "无此审批操作"),
-	
+	/**
+	 * Spc 100850020 error code enum.
+	 */
+	SPC100850020(100850020, "服务商ID不能为空"),
+	/**
+	 * Spc 100850021 error code enum.
+	 */
+	SPC100850021(100850021, "该工程师不存在，engineerId=%s"),
+	/**
+	 * Spc 100850022 error code enum.
+	 */
+	SPC100850022(100850022, "工程师Id不能为空，engineerId=%s"),
+
+	/**
+	 * Imc 10090000 error code enum
+	 */
+
+	IMC10090000(10090000,"巡检任务子项的附件id获取失败"),
+
+	IMC10090001(10090001,"未传入巡检任务Id"),
+
+	IMC10090002(10090002,"未传入巡检任务子项的Id"),
+
+	IMC10090003(10090003,"未传入巡检任务的状态"),
+
+	IMC10090004(10090004,"未传入巡检任务子项的状态"),
+
+	IMC10090005(10090005,"查无此图"),
+
+	IMC10090006(10090006,"找不到当前巡检任务对应的发起人"),
+
+	IMC10090007(10090007,"消息发送失败"),
+
+	IMC10090008(10090008,"userId或role为空"),
+
 	
 	RDC100000000(10000000, "新建备品备件订单失败，数据库操作异常"),
 	
@@ -760,7 +992,18 @@ public enum ErrorCodeEnum {
 
 	RDC100000003(10000003, "该备品备件订单申请正在审核中，请勿重复提交"),
 
-	RDC100000004(10000004, "备品备件订单处理异常，请稍后重试")
+	RDC100000004(10000004, "备品备件订单处理异常，请稍后重试"),
+
+	/**
+	 * WebSocket error code enum
+	 */
+	WEBSOCKET10100000(10100000,"消息体为空"),
+
+	WEBSOCKET10100001(10100001,"消息推送失败"),
+
+	WEBSOCKET10100002(10100002,"查无此消息"),
+
+
 	;
 	private int code;
 	private String msg;

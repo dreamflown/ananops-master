@@ -3,9 +3,7 @@ package com.ananops.provider.service.impl;
 import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.base.enums.ErrorCodeEnum;
 import com.ananops.base.exception.BusinessException;
-import com.ananops.provider.mapper.SpcCompanyEngineerMapper;
 import com.ananops.provider.mapper.SpcCompanyMapper;
-import com.ananops.provider.mapper.SpcEngineerMapper;
 import com.ananops.provider.model.domain.MdmcTask;
 import com.ananops.provider.model.domain.SpcCompany;
 import com.ananops.provider.model.dto.*;
@@ -27,6 +25,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -40,13 +39,7 @@ import java.util.List;
 public class SpcWorkOrderServiceImpl implements SpcWorkOrderService {
 
     @Resource
-    private SpcEngineerMapper spcEngineerMapper;
-
-    @Resource
     private SpcCompanyMapper spcCompanyMapper;
-
-    @Resource
-    private SpcCompanyEngineerMapper spcCompanyEngineerMapper;
 
     @Resource
     private ImcTaskFeignApi imcTaskFeignApi;
@@ -66,12 +59,16 @@ public class SpcWorkOrderServiceImpl implements SpcWorkOrderService {
     @Resource
     private SpcEngineerService spcEngineerService;
 
+    @Resource
     private UacUserFeignApi uacUserFeignApi;
 
     @Override
     public List<WorkOrderVo> queryAllWorkOrders(WorkOrderStatusQueryDto workOrderStatusQueryDto, LoginAuthDto loginAuthDto) {
         List<WorkOrderVo> workOrderVos = new ArrayList<>();
-        Long groupId = loginAuthDto.getGroupId();
+        // 获取登录用户的组织Id
+        Long userGroupId = loginAuthDto.getGroupId();
+        // 根据组织Id查询公司Id
+        Long groupId = uacGroupFeignApi.getCompanyInfoById(userGroupId).getResult().getId();
         String workOrderType = workOrderStatusQueryDto.getType();
         Integer workOrderStatus = workOrderStatusQueryDto.getStatus();
 
@@ -406,40 +403,59 @@ public class SpcWorkOrderServiceImpl implements SpcWorkOrderService {
     public List<WorkOrderVo> queryAllUnConfirmedWorkOrders(WorkOrderStatusQueryDto workOrderStatusQueryDto, LoginAuthDto loginAuthDto){
         List<WorkOrderVo> workOrderVoList = this.queryAllWorkOrders(workOrderStatusQueryDto, loginAuthDto);
         List<WorkOrderVo> unconfirmedWorkOrders = new ArrayList<>();
+        List<TaskDto> imcTaskList;
+        List<MdmcTask> mdmcTaskList;
+        List<Long> imcTaskIdList = new ArrayList<>();
+        List<Long> mdmcTaskIdList = new ArrayList<>();
+        HashMap<Long,WorkOrderVo> workOrderVoHashMap = new HashMap<>();
+        //获取imc或mdmc的工单id列表
         for(WorkOrderVo workOrderVo:workOrderVoList){
             Long taskId = workOrderVo.getId();//工单Id（维修维护or巡检的）
             String type = workOrderVo.getType();//工单类型，巡检(inspection)和维修维护(maintain)
+            workOrderVoHashMap.put(taskId,workOrderVo);
             if("inspection".equals(type)){//如果当前工单类型是巡检工单
-                int status = imcTaskFeignApi.getTaskByTaskId(taskId).getResult().getStatus();
-                if(status == 2){
-                    //如果巡检任务不是处于“等待服务商接单”的阶段
-                    unconfirmedWorkOrders.add(workOrderVo);//将次任务从列表中移除掉
-                }
+                imcTaskIdList.add(taskId);
+//                int status = imcTaskFeignApi.getTaskByTaskId(taskId).getResult().getStatus();
+//                if(status == 2){
+//                    //如果巡检任务不是处于“等待服务商接单”的阶段
+//                    unconfirmedWorkOrders.add(workOrderVo);//将次任务从列表中移除掉
+//                }
             }else if("maintain".equals(type)){//如果当前工单类型是维修维护工单
-                int status = mdmcTaskFeignApi.getTaskByTaskId(taskId).getResult().getStatus();
-                if(status == 3 || status == 7){
-                    //如果维修维护任务不是处于“服务商待接单”或者是“服务商待审核备品备件工单”这一状态
-                    unconfirmedWorkOrders.add(workOrderVo);//将此次任务从列表中移除
-                }
+                mdmcTaskIdList.add(taskId);
+//                int status = mdmcTaskFeignApi.getTaskByTaskId(taskId).getResult().getStatus();
+//                if(status == 3 || status == 7){
+//                    //如果维修维护任务不是处于“服务商待接单”或者是“服务商待审核备品备件工单”这一状态
+//                    unconfirmedWorkOrders.add(workOrderVo);//将此次任务从列表中移除
+//                }
             }
         }
-//        workOrderVoVoList.forEach(workOrderVo -> {
-//            Long taskId = workOrderVo.getId();//工单Id（维修维护or巡检的）
-//            String type = workOrderVo.getType();//工单类型，巡检(inspection)和维修维护(maintain)
-//            if("inspection".equals(type)){//如果当前工单类型是巡检工单
-//                int status = imcTaskFeignApi.getTaskByTaskId(taskId).getResult().getStatus();
-//                if(status != 2){
-//                    //如果巡检任务不是处于“等待服务商接单”的阶段
-//                    workOrderVoVoList.remove(workOrderVo);//将次任务从列表中移除掉
-//                }
-//            }else if("maintain".equals(type)){//如果当前工单类型是维修维护工单
-//                int status = mdmcTaskFeignApi.getTaskByTaskId(taskId).getResult().getStatus();
-//                if(status != 3 && status != 7){
-//                    //如果维修维护任务不是处于“服务商待接单”或者是“服务商待审核备品备件工单”这一状态
-//                    workOrderVoVoList.remove(workOrderVo);//将此次任务从列表中移除
-//                }
-//            }
-//        });
+        if(imcTaskIdList.size()>0){
+            //获取imc的任务列表
+            imcTaskList = imcTaskFeignApi.getImcTaskList(imcTaskIdList.toArray(new Long[imcTaskIdList.size()])).getResult();
+            //筛选工单
+            imcTaskList.forEach(taskDto -> {
+                Long taskId = taskDto.getId();
+                int status = taskDto.getStatus();
+                if(status==2){
+                    //如果当前任务处于服务商待接单状态
+                    unconfirmedWorkOrders.add(workOrderVoHashMap.get(taskId));
+                }
+            });
+        }
+        if(mdmcTaskIdList.size()>0){
+            //获取mdmc的任务列表
+            mdmcTaskList = mdmcTaskFeignApi.getMdmcTaskList(mdmcTaskIdList.toArray(new Long[mdmcTaskIdList.size()])).getResult();
+
+            mdmcTaskList.forEach(mdmcTask -> {
+                Long taskId =  mdmcTask.getId();
+                int status = mdmcTask.getStatus();
+                if(status == 3 || status == 7){
+                    //如果维修维护任务处于“服务商待接单”或者是“服务商待审核备品备件工单”这一状态
+                    unconfirmedWorkOrders.add(workOrderVoHashMap.get(taskId));
+                }
+            });
+        }
+
         return unconfirmedWorkOrders;
     }
 
@@ -453,13 +469,50 @@ public class SpcWorkOrderServiceImpl implements SpcWorkOrderService {
     public List<WorkOrderVo> queryAllUnDistributedWorkOrders(WorkOrderStatusQueryDto workOrderStatusQueryDto, LoginAuthDto loginAuthDto){
         List<WorkOrderVo> workOrderVoVoList = this.queryAllWorkOrders(workOrderStatusQueryDto, loginAuthDto);
         List<WorkOrderVo> undistributedWorkOrders = new ArrayList<>();
+        List<TaskDto> imcTaskList;
+        List<MdmcTask> mdmcTaskList;
+        List<Long> imcTaskIdList = new ArrayList<>();
+        List<Long> mdmcTaskIdList = new ArrayList<>();
+        HashMap<Long,WorkOrderVo> workOrderVoHashMap = new HashMap<>();
         workOrderVoVoList.forEach(workOrderVo -> {
             Long taskId = workOrderVo.getId();//工单Id（维修维护or巡检的）
             String type = workOrderVo.getType();//工单类型，巡检(inspection)和维修维护(maintain)
+            workOrderVoHashMap.put(taskId,workOrderVo);
             if("inspection".equals(type)){//如果当前工单类型是巡检工单
-                int inspectionTaskStatus = imcTaskFeignApi.getTaskByTaskId(taskId).getResult().getStatus();
-                List<ItemDto> itemDtoList = imcTaskFeignApi.getTaskByTaskId(taskId).getResult().getItemDtoList();
-                if(inspectionTaskStatus == 3){
+                imcTaskIdList.add(taskId);
+//                int inspectionTaskStatus = imcTaskFeignApi.getTaskByTaskId(taskId).getResult().getStatus();
+//                List<ItemDto> itemDtoList = imcTaskFeignApi.getTaskByTaskId(taskId).getResult().getItemDtoList();
+//                if(inspectionTaskStatus == 3){
+//                    int mark=0;
+//                    for(ItemDto itemDto : itemDtoList){
+//                        if(itemDto.getStatus()==1){
+//                            mark=1;
+//                            break;
+//                        }
+//                    }
+//                    if(mark==1){
+//                        //如果巡检任务的全部任务子项仍然有没分配工程师的
+//                        undistributedWorkOrders.add(workOrderVo);//将此任务从列表中移除掉
+//                    }
+//                }
+            }else if("maintain".equals(type)){//如果当前工单类型是维修维护工单
+                mdmcTaskIdList.add(taskId);
+//                int status = mdmcTaskFeignApi.getTaskByTaskId(taskId).getResult().getStatus();
+//                if(status == 4){
+//                    //如果维修维护任务处于“服务商已接单，待分配维修工”这一状态
+//                    undistributedWorkOrders.add(workOrderVo);//将此次任务从列表中移除
+//                }
+            }
+        });
+        //获取imc的任务列表
+        if(imcTaskIdList.size()>0){
+            imcTaskList = imcTaskFeignApi.getImcTaskList(imcTaskIdList.toArray(new Long[imcTaskIdList.size()])).getResult();
+            //筛选工单
+            imcTaskList.forEach(taskDto -> {
+                Long taskId = taskDto.getId();
+                int status = taskDto.getStatus();
+                List<ItemDto> itemDtoList = taskDto.getItemDtoList();
+                if(status == 3){
                     int mark=0;
                     for(ItemDto itemDto : itemDtoList){
                         if(itemDto.getStatus()==1){
@@ -469,17 +522,24 @@ public class SpcWorkOrderServiceImpl implements SpcWorkOrderService {
                     }
                     if(mark==1){
                         //如果巡检任务的全部任务子项仍然有没分配工程师的
-                        undistributedWorkOrders.add(workOrderVo);//将此任务从列表中移除掉
+                        undistributedWorkOrders.add(workOrderVoHashMap.get(taskId));
                     }
                 }
-            }else if("maintain".equals(type)){//如果当前工单类型是维修维护工单
-                int status = mdmcTaskFeignApi.getTaskByTaskId(taskId).getResult().getStatus();
+            });
+        }
+        if(mdmcTaskIdList.size()>0){
+            //获取mdmc的任务列表
+            mdmcTaskList = mdmcTaskFeignApi.getMdmcTaskList(mdmcTaskIdList.toArray(new Long[mdmcTaskIdList.size()])).getResult();
+
+            mdmcTaskList.forEach(mdmcTask -> {
+                Long taskId =  mdmcTask.getId();
+                int status = mdmcTask.getStatus();
                 if(status == 4){
                     //如果维修维护任务处于“服务商已接单，待分配维修工”这一状态
-                    undistributedWorkOrders.add(workOrderVo);//将此次任务从列表中移除
+                    undistributedWorkOrders.add(workOrderVoHashMap.get(taskId));
                 }
-            }
-        });
+            });
+        }
         return undistributedWorkOrders;
     }
 

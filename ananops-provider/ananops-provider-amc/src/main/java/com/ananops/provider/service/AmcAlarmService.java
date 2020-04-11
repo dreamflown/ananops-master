@@ -5,7 +5,11 @@ import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.core.support.IService;
 import com.ananops.provider.model.domain.AmcAlarm;
 import com.ananops.provider.model.dto.AlarmQuery;
+import com.ananops.provider.model.dto.oss.ElementImgUrlDto;
+import com.ananops.provider.model.dto.oss.OptUploadFileReqDto;
+import com.ananops.provider.model.dto.oss.OptUploadFileRespDto;
 import com.github.pagehelper.PageInfo;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 
@@ -15,6 +19,7 @@ import java.util.List;
 public interface AmcAlarmService extends IService<AmcAlarm> {
     /**
      * 编辑报警信息
+     *
      * @param amcAlarm
      * @param loginAuthDto
      * @return
@@ -23,6 +28,7 @@ public interface AmcAlarmService extends IService<AmcAlarm> {
 
     /**
      * 查询报警信息
+     *
      * @param id
      * @return
      */
@@ -30,6 +36,7 @@ public interface AmcAlarmService extends IService<AmcAlarm> {
 
     /**
      * 分页返回用户组织下的报警信息
+     *
      * @param baseQuery
      * @return
      */
@@ -38,6 +45,7 @@ public interface AmcAlarmService extends IService<AmcAlarm> {
 
     /**
      * 根据告警等级,分页筛选报警信息
+     *
      * @param alarmQuery
      * @return
      */
@@ -45,6 +53,7 @@ public interface AmcAlarmService extends IService<AmcAlarm> {
 
     /**
      * 根据处理情况,分页筛选报警信息
+     *
      * @param alarmQuery
      * @return
      */
@@ -52,33 +61,71 @@ public interface AmcAlarmService extends IService<AmcAlarm> {
 
     /**
      * 获取待处理告警数
+     *
      * @return
      */
     int getDealingCount();
 
     /**
      * 获取急需处理告警数
+     *
      * @return
      */
     int getUrgencyCount();
 
     /**
      * 获取已处理处理告警数
+     *
      * @return
      */
     int getDealedCount();
 
     /**
      * 根据服务商id删除报警信息
+     *
      * @param alarmId
      * @return
      */
     int deleteAlarmByAlarmId(Long alarmId);
 
-    /**、
+    /**
+     * 、
      * 根据告警状态删除报警信息
+     *
      * @param alarmStatus
      * @return
      */
     int deleteAlarmsByAlarmStatus(int alarmStatus);
+
+    /**
+     * 获取总告警数
+     *
+     * @return
+     */
+    int getAllAlarmCount();
+
+    /**
+     * 上传报警图片
+     *
+     * @param multipartRequest
+     * @param optUploadFileReqDto
+     * @param loginAuthDto
+     * @return
+     */
+    List<OptUploadFileRespDto> uploadAlarmPhoto(MultipartHttpServletRequest multipartRequest, OptUploadFileReqDto optUploadFileReqDto, LoginAuthDto loginAuthDto);
+
+    /**
+     * 根据告警id下载图片附件
+     *
+     * @param id
+     * @return
+     */
+    List<ElementImgUrlDto> getAlarmAttachment(Long id);
+
+    /**
+     * 更新报警状态
+     * @param alarmId
+     * @return
+     */
+    int updateAlarmStatus(Long alarmId);
 }

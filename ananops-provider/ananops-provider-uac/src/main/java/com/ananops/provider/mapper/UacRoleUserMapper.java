@@ -98,4 +98,15 @@ public interface UacRoleUserMapper extends MyMapper<UacRoleUser> {
 	 * @return the int
 	 */
 	int deleteByRoleIdList(@Param("roleIdList") List<Long> roleIdList);
+
+	/**
+	 * 查询该userId集合中，同种角色的有哪些。
+	 *
+	 * @param roleId 角色Id
+	 *
+	 * @param userIds 用户Id集合
+	 *
+	 * @return 所有同种角色的用户Id集合
+	 */
+	List<Long> listByRoleIdUserIds(@Param("roleId") Long roleId, @Param("userIds") List<Long> userIds);
 }

@@ -39,7 +39,7 @@ public class GlobalConstant {
 	public static final String TEST_PROFILE = "test";
 	public static final String PRO_PROFILE = "pro";
 	public static final int TWO_INT = 2;
-	public static final int M_SIZE = 1024;
+	public static final int M_SIZE = 1024 * 1024;
 	public static final String ROOT_PREFIX = "ananops";
 
 	public static final int EXCEPTION_CAUSE_MAX_LENGTH = 2048;

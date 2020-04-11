@@ -135,4 +135,13 @@ public class ImcAddInspectionTaskDto implements Serializable {
      */
     @ApiModelProperty(value = "当前操作用户的LoginAuthDto")
     private LoginAuthDto loginAuthDto;
+
+    /**
+     * 巡检任务的执行次数
+     */
+    @ApiModelProperty(value = "巡检执行次数")
+    private Integer times;
+
+    @ApiModelProperty(value = "巡检内容")
+    private String content;
 }

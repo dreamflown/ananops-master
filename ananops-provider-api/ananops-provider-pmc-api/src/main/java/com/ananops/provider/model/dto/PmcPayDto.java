@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Created By ChengHao On 2019/12/30
@@ -24,5 +25,5 @@ public class PmcPayDto implements Serializable {
      * 支付金额
      */
     @ApiModelProperty(value = "支付金额")
-    private Long paymentMoney;
+    private BigDecimal paymentMoney;
 }

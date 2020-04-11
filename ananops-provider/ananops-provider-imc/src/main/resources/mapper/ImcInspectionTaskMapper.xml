@@ -27,6 +27,7 @@
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="task_name" jdbcType="VARCHAR" property="taskName" />
     <result column="frequency" jdbcType="INTEGER" property="frequency" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
   </resultMap>
   <sql id="Base_Column_List">
     ${alias}.id,${alias}.version,${alias}.creator,${alias}.creator_id,${alias}.created_time,${alias}.last_operator,${alias}.last_operator_id,
@@ -42,6 +43,11 @@
     </include>
     FROM
     an_imc_inspection_task as task , an_imc_user_task as userTask
+    WHERE 1=1 AND userTask.user_id = #{userId} AND task.id = userTask.task_id
+  </select>
+  <!-- 根据甲方id查询对应的巡检任务-->
+  <select id="countTaskByUserId" resultType="integer">
+    SELECT COUNT(*) FROM an_imc_inspection_task as task , an_imc_user_task as userTask
     WHERE 1=1 AND userTask.user_id = #{userId} AND task.id = userTask.task_id
   </select>
   <!--  根据甲方用户id和任务名模糊查询对应的巡检任务-->
@@ -156,4 +162,83 @@
     WHERE 1=1 AND facilitatorGroupTask.facilitator_group_id = #{facilitatorGroupId} AND task.id = facilitatorGroupTask.task_id AND task.status = #{status}
     AND task.task_name like #{taskName}
   </select>
+  <!--获取全部未分配工程师，并且距离截止日期已不足10天的巡检任务-->
+  <resultMap id="undistributedTaskList" type="com.ananops.provider.model.dto.UndistributedImcTaskDto" extends="BaseResultMap">
+    <result column="endDate" jdbcType="TIMESTAMP" property="endDate" />
+    <result column="remainDays" jdbcType="INTEGER" property="remainDays" />
+  </resultMap>
+  <select id="queryAllUndistributedTask" resultMap="undistributedTaskList">
+    SELECT
+    <include refid="Base_Column_List">
+      <property name="alias" value="task"></property>
+    </include>
+    ,DATE_ADD(item.scheduled_start_time,INTERVAL item.days DAY) as endDate,
+    DATEDIFF(DATE_ADD(item.scheduled_start_time,INTERVAL item.days DAY),NOW()) as remainDays
+    FROM
+    an_imc_inspection_task as task,an_imc_inspection_item as item
+    WHERE 1=1 AND item.status = 1 and item.inspection_task_id = task.id
+    AND DATEDIFF(DATE_ADD(item.scheduled_start_time,INTERVAL item.days DAY),NOW())>=0
+    AND DATEDIFF(DATE_ADD(item.scheduled_start_time,INTERVAL item.days DAY),NOW()) &lt;=10
+  </select>
+  <!--根据服务商组织的id查询全部未分配维修工的巡检任务-->
+  <select id="queryAllUnDistributedTask" resultType="com.ananops.provider.model.domain.ImcInspectionTask">
+    SELECT
+    <include refid="Base_Column_List">
+      <property name="alias" value="task"></property>
+    </include>
+    FROM
+    an_imc_inspection_task as task
+    WHERE 1=1
+    AND task.facilitator_id = #{facilitatorId}
+    AND task.status = 3
+    AND task.id IN
+    (
+      SELECT DISTINCT item.inspection_task_id
+      FROM an_imc_inspection_item as item
+      WHERE item.inspection_task_id = task.id
+      AND item.status = 1
+      UNION
+      SELECT task2.id
+      FROM an_imc_inspection_task as task2,an_imc_inspection_item as item
+      WHERE
+      task2.facilitator_id = #{facilitatorId}
+      AND task2.status = 3
+      AND task2.id not in
+      (
+          SELECT inspection_task_id
+          FROM an_imc_inspection_item
+      )
+    )
+  </select>
+
+    <!--根据服务商组织的id查询全部服务商已完成的巡检任务-->
+    <select id="queryAllFinishedTaskByFacilitatorId" resultType="com.ananops.provider.model.domain.ImcInspectionTask">
+        SELECT
+        <include refid="Base_Column_List">
+            <property name="alias" value="task"></property>
+        </include>
+        FROM
+        an_imc_inspection_task as task
+        WHERE 1=1
+        AND task.status &gt; 2
+        AND task.facilitator_id = #{facilitatorId}
+        AND task.id NOT IN
+        (
+            SELECT DISTINCT item.inspection_task_id
+            FROM an_imc_inspection_item as item
+            WHERE item.inspection_task_id = task.id
+            AND item.status = 1
+            UNION
+            SELECT task2.id
+            FROM an_imc_inspection_task as task2,an_imc_inspection_item as item
+            WHERE
+            task2.facilitator_id = #{facilitatorId}
+            AND task.status &gt; 2
+            AND task2.id not in
+            (
+                SELECT inspection_task_id
+                FROM an_imc_inspection_item
+            )
+        )
+    </select>
 </mapper>

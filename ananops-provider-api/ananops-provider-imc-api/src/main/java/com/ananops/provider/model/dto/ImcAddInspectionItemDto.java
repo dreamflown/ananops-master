@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by rongshuai on 2019/11/28 10:18
@@ -116,4 +117,16 @@ public class ImcAddInspectionItemDto implements Serializable {
      */
     @ApiModelProperty(value = "巡检任务子项已经执行的次数，初始为0")
     private Integer count;
+
+    /**
+     * 巡检任务子项所在的网点地址
+     */
+    @ApiModelProperty(value = "巡检任务子项所在的网点地址")
+    private String location;
+
+    /**
+     * 附件id
+     */
+    @ApiModelProperty(value = "巡检任务子项对应的附件id")
+    private List<Long> attachmentIds;
 }

@@ -76,14 +76,14 @@ public class MdmcTaskItemServiceImpl extends BaseService<MdmcTaskItem> implement
         taskItem.setUpdateInfo(loginAuthDto);
         Long taskId = taskItem.getTaskId();
         if (taskId==null){
-            throw new BusinessException(ErrorCodeEnum.GL9999098,taskId);
+            throw new BusinessException(ErrorCodeEnum.MDMC99980004);
         }
         Example example = new Example(MdmcTask.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("id",taskId);
         List<MdmcTask> taskList =mdmcTaskMapper.selectByExample(example);
         if(taskList.size()==0){//如果没有此任务
-            throw new BusinessException(ErrorCodeEnum.GL9999098,taskId);
+            throw new BusinessException(ErrorCodeEnum.MDMC9998098,taskId);
         }
         if(mdmcAddTaskItemDto.getId()==null){//如果是新增一条任务子项记录
             Long itemId = super.generateId();
@@ -96,7 +96,7 @@ public class MdmcTaskItemServiceImpl extends BaseService<MdmcTaskItem> implement
             criteria1.andEqualTo("id",itemId);
             List<MdmcTaskItem> taskItemList =mdmcTaskItemMapper.selectByExample(example1);
             if(taskItemList.size()==0){//如果没有此任务
-                throw new BusinessException(ErrorCodeEnum.GL9999097,itemId);
+                throw new BusinessException(ErrorCodeEnum.MDMC9998097,itemId);
             }
             mdmcTaskItemMapper.updateByPrimaryKeySelective(taskItem);
         }
@@ -119,10 +119,34 @@ public class MdmcTaskItemServiceImpl extends BaseService<MdmcTaskItem> implement
             throw new BusinessException(ErrorCodeEnum.GL9999094);
         }
         PageHelper.startPage(statusDto.getPageNum(),statusDto.getPageSize());
+        example.setOrderByClause("created_time desc");
         pageItemDto.setTaskItemList(mdmcTaskItemMapper.selectByExample(example));
         pageItemDto.setPageNum(statusDto.getPageNum());
         pageItemDto.setPageSize(statusDto.getPageSize());
         return pageItemDto;
+    }
+
+    @Override
+    public int getTaskItemCount(Long taskId) {
+        Example example = new Example(MdmcTaskItem.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("taskId",taskId);
+
+        return mdmcTaskItemMapper.selectCountByExample(example);
+    }
+
+    @Override
+    public MdmcTaskItem deleteItemById(Long itemId, LoginAuthDto loginAuthDto) {
+        Example example=new Example(MdmcTaskItem.class);
+        Example.Criteria criteria=example.createCriteria();
+        criteria.andEqualTo("id",itemId);
+        mdmcTaskItemMapper.deleteByExample(example);
+        return mdmcTaskItemMapper.selectByPrimaryKey(itemId);
+    }
+
+    @Override
+    public MdmcTaskItem getItemById(Long itemId) {
+        return mdmcTaskItemMapper.selectByPrimaryKey(itemId);
     }
 
 

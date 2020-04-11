@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -125,13 +126,13 @@ public class PmcContractDto implements Serializable {
      * 支付金额
      */
     @ApiModelProperty(value = "支付金额")
-    private Long paymentMoney;
+    private BigDecimal paymentMoney;
 
     /**
      * 项目金额
      */
     @ApiModelProperty(value = "项目金额")
-    private Long projectMoney;
+    private BigDecimal projectMoney;
 
     /**
      * 付款时间
@@ -169,7 +170,7 @@ public class PmcContractDto implements Serializable {
      * 乙供辅料金额（乙方会提供一些免费辅件，超过该金额的才会另收费）
      */
     @ApiModelProperty(value = "乙供辅料金额")
-    private Long assitMoney;
+    private BigDecimal assitMoney;
 
     /**
      * 维修维护最迟响应时间,单位小时（配合转单功能以及平台的提醒功能，在一定时限内短信、电话或邮件提醒）

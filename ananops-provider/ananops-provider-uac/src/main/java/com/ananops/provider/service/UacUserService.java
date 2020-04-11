@@ -8,6 +8,7 @@
 
 package com.ananops.provider.service;
 
+import com.ananops.provider.model.domain.UacGroupUser;
 import com.ananops.provider.model.vo.UserVo;
 import com.github.pagehelper.PageInfo;
 import com.ananops.base.dto.LoginAuthDto;
@@ -317,7 +318,7 @@ public interface UacUserService extends IService<UacUser> {
 	 *
 	 * @param userInfoDto 注册的用户信息
      */
-	void addUser(UserInfoDto userInfoDto);
+	Long addUser(UserInfoDto userInfoDto);
 
 	/**
 	 * 根据用户值机员id获取用户负责人列表
@@ -335,6 +336,15 @@ public interface UacUserService extends IService<UacUser> {
 	 */
 	List<UserVo> getSubordinateUserListByUserId(Long userId);
 
+
+	/**
+	 * 根据用户id获取用户领导的groupId
+	 *
+	 * @param userId
+	 * @return userVo
+	 */
+	Long getPGIdByUserId(Long userId);
+
 	/**
 	 * 获取用户可以绑定角色页面数据
 	 * @param userId
@@ -342,4 +352,29 @@ public interface UacUserService extends IService<UacUser> {
 	 * @return
 	 */
 	UserBindRoleVo getUserPermitBindRoleDto(Long userId, Long roleId);
+
+	/**
+	 * 普通用户修改个人密码
+	 *
+	 * @param userModifyPwdDto
+	 * @param loginAuthDto
+	 * @return
+	 */
+    int authUserModifyPwd(UserModifyPwdDto userModifyPwdDto, LoginAuthDto loginAuthDto);
+
+	/**
+	 * 通过用户Id集合批量查询用户信息
+	 *
+	 * @param alreadyUserId 用户Id集合
+	 *
+	 * @return 返回用户信息列表
+	 */
+	List<UacUser> batchGetUserInfo(List<Long> alreadyUserId);
+
+	/**
+	 * 用户绑定组织
+	 * @param uacGroupUser
+	 * @param loginAuthDto
+	 */
+    void bindUserGroup(UacGroupUser uacGroupUser, LoginAuthDto loginAuthDto);
 }

@@ -22,5 +22,5 @@ public class EngineerStatusDto extends BaseEntity implements Serializable {
      * 工程师状态
      */
     @ApiModelProperty(value = "状态")
-    private Integer status;
+    private String status;
 }

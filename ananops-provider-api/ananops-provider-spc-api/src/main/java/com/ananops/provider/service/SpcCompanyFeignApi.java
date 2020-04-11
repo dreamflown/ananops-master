@@ -21,6 +21,9 @@ public interface SpcCompanyFeignApi {
     @PostMapping(value = "/api/company/getCompanyById")
     Wrapper<Integer> getCompanyById(@RequestBody CompanyDto companyDto);
 
+    @PostMapping(value = "/api/company/newRegister")
+    Wrapper<Integer> registerNewCompany(@RequestBody CompanyDto companyDto);
+
     @PostMapping(value = "/api/company/getCompanyDetailsById/{companyId}")
     Wrapper<CompanyVo> getCompanyDetailsById(@PathVariable(value = "companyId") Long companyId);
 }

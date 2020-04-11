@@ -63,7 +63,7 @@ public class UacMenuMainController extends BaseController {
 	 * @return the wrapper
 	 */
 	@PostMapping(value = "/queryById/{id}")
-	@ApiOperation(httpMethod = "POST", value = "编辑菜单")
+	@ApiOperation(httpMethod = "POST", value = "查询菜单信息")
 	public Wrapper<ViewMenuVo> queryMenuVoById(@ApiParam(name = "id", value = "菜单id") @PathVariable Long id) {
 		ViewMenuVo menuVo = uacMenuService.getViewVoById(id);
 		return WrapMapper.ok(menuVo);

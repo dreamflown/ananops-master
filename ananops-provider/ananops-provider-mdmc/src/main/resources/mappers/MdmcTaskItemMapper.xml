@@ -27,6 +27,8 @@
       <arg column="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="suggestion" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="result" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="trouble_address" jdbcType="VARCHAR" javaType="java.lang.String" />
+        <arg column="trouble_type" jdbcType="VARCHAR" javaType="java.lang.String" />
     </constructor>
   </resultMap>
   <select id="selectByDeviceId" resultMap="BaseResultMap" parameterType="map">

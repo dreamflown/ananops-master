@@ -8,8 +8,12 @@
 
 package com.ananops.provider.service;
 
+import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.core.support.IService;
+import com.ananops.provider.model.domain.TpcMqTag;
 import com.ananops.provider.model.domain.TpcMqTopic;
+import com.ananops.provider.model.dto.AddTopicDto;
+import com.ananops.provider.model.dto.TopicBindTagDto;
 import com.ananops.provider.model.vo.TpcMqTopicVo;
 
 import java.util.List;
@@ -20,6 +24,21 @@ import java.util.List;
  * @author ananops.com @gmail.com
  */
 public interface TpcMqTopicService extends IService<TpcMqTopic> {
+	/**
+	 * 添加主题
+	 * @param addTopicDto
+	 * @param loginAuthDto
+	 * @return
+	 */
+	TpcMqTopic addMqTopic(AddTopicDto addTopicDto, LoginAuthDto loginAuthDto);
+
+	/**
+	 * 为主题绑定标签
+	 * @param topicBindTagDto
+	 * @param loginAuthDto
+	 * @return
+	 */
+	TpcMqTag topicBindTag(TopicBindTagDto topicBindTagDto, LoginAuthDto loginAuthDto);
 	/**
 	 * 查询MQ topic列表.
 	 *

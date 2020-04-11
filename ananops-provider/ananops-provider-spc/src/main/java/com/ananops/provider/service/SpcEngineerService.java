@@ -3,12 +3,13 @@ package com.ananops.provider.service;
 import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.core.support.IService;
 import com.ananops.provider.model.domain.SpcEngineer;
-import com.ananops.provider.model.dto.EngineerDto;
-import com.ananops.provider.model.dto.EngineerRegisterDto;
-import com.ananops.provider.model.dto.EngineerStatusDto;
-import com.ananops.provider.model.dto.ModifyEngineerStatusDto;
+import com.ananops.provider.model.dto.*;
+import com.ananops.provider.model.dto.oss.ElementImgUrlDto;
+import com.ananops.provider.model.dto.oss.OptUploadFileReqDto;
+import com.ananops.provider.model.dto.oss.OptUploadFileRespDto;
 import com.ananops.provider.model.vo.EngineerSimpleVo;
 import com.ananops.provider.model.vo.EngineerVo;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
@@ -77,18 +78,6 @@ public interface SpcEngineerService extends IService<SpcEngineer> {
      * @param loginAuthDto 登录的服务商信息
      */
     void addSpcEngineer(EngineerRegisterDto engineerRegisterDto, LoginAuthDto loginAuthDto);
-
-    /**
-     * 通过上传的Excel文件批量创建工程师
-     *
-     * @param multipartRequest 文件输入流
-     *
-     * @param loginAuthDto 登录的用户信息
-     *
-     * @param b
-     */
-    void uploadEngineerExcelFile(MultipartHttpServletRequest multipartRequest, LoginAuthDto loginAuthDto);
-
     /**
      * 根据工程师Id查询工程师信息
      *
@@ -96,7 +85,7 @@ public interface SpcEngineerService extends IService<SpcEngineer> {
      *
      * @return 返回工程师对象
      */
-    EngineerVo queryByEngineerId(Long engineerId);
+    EngineerVo queryByEngineerId(Long userId);
 
     /**
      * 根据工程师Id修改工程师状态
@@ -124,4 +113,47 @@ public interface SpcEngineerService extends IService<SpcEngineer> {
      * @return 返回工程师简单信息集合
      */
     List<EngineerSimpleVo> getEngineersListByProjectId(Long projectId);
+    /**
+     * 上传工程师相关文件
+     *
+     * @param multipartRequest
+     *
+     * @param optUploadFileReqDto
+     *
+     * @param loginAuthDto
+     *
+     * @param b
+     *
+     * @return
+     */
+    List<OptUploadFileRespDto> uploadEngineerFile(MultipartHttpServletRequest multipartRequest, OptUploadFileReqDto optUploadFileReqDto, LoginAuthDto loginAuthDto);
+
+    /**
+     * 下载工程师相关文件
+     *
+     * @param id
+     *
+     * @return
+     */
+    List<ElementImgUrlDto> getEngineerFile(Long id);
+
+    /**
+     * 根据公司GroupId查询工程师列表
+     *
+     * @param engineerQueryDto
+     *
+     * @param loginAuthDto
+     *
+     * @return
+     */
+    List<EngineerDto> queryListByGroupId(EngineerQueryDto engineerQueryDto, LoginAuthDto loginAuthDto);
+
+    /**
+     * 根据工程师Id删除工程师信息
+     *
+     * @param engineerId 工程师Id
+     *
+     * @return
+     */
+    int deleteEngineerById(Long engineerId);
 }

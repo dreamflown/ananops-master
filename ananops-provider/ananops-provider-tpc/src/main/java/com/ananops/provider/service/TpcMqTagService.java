@@ -20,6 +20,7 @@ import java.util.List;
  * @author ananops.com @gmail.com
  */
 public interface TpcMqTagService extends IService<TpcMqTag> {
+
 	/**
 	 * 查询Tag列表.
 	 *

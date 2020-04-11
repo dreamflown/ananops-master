@@ -5,9 +5,11 @@ import com.ananops.provider.model.domain.MdmcTask;
 import com.ananops.provider.model.dto.*;
 import com.ananops.provider.service.MdmcTaskFeignApi;
 import com.ananops.wrapper.Wrapper;
+import com.github.pagehelper.PageInfo;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -42,7 +44,7 @@ public class MdmcTaskFeignHystrix implements MdmcTaskFeignApi {
     }
     
     @Override
-    public Wrapper<MdmcPageDto> getTaskList(MdmcQueryDto queryDto) {
+    public Wrapper<PageInfo> getTaskList(MdmcQueryDto queryDto) {
         return null;
     }
 
@@ -83,6 +85,11 @@ public class MdmcTaskFeignHystrix implements MdmcTaskFeignApi {
 
     @Override
     public Wrapper<Object> updateStatusAfterPaymentDone(Long taskId, LoginAuthDto loginAuthDto) {
+        return null;
+    }
+
+    @Override
+    public Wrapper<List<MdmcTask>> getMdmcTaskList(@PathVariable Long[] mdmcTaskIdList){
         return null;
     }
 }

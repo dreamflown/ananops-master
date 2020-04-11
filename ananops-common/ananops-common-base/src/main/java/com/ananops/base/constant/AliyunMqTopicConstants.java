@@ -59,7 +59,17 @@ public class AliyunMqTopicConstants {
 		/**
 		 * Imc topic mq topic enum.
 		 */
-		IMC_TOPIC("IMC_TOPIC","IMC_TOPIC"),;
+		IMC_TOPIC("IMC_TOPIC","IMC_TOPIC"),
+		/**
+		 * Mdmc topic mq topic enum.
+		 */
+		MDMC_TOPIC("MDMC_TOPIC","MDMC_TOPIC"),
+		/**
+		 * Amc topic mq topic enum.
+		 */
+		AMC_TOPIC("AMC_TOPIC","AMC_TOPIC"),
+		;
+
 		MqTopicEnum(String topic, String topicName) {
 			this.topic = topic;
 			this.topicName = topicName;
@@ -154,7 +164,28 @@ public class AliyunMqTopicConstants {
 		/**
 		 * 修改巡检任务状态
 		 */
-		MODIFY_INSPECTION_TASK_STATUS("MODIFY_INSPECTION_TASK_STATUS",MqTopicEnum.IMC_TOPIC.getTopic(),"修改巡检任务的状态"),;
+		MODIFY_INSPECTION_TASK_STATUS("MODIFY_INSPECTION_TASK_STATUS",MqTopicEnum.IMC_TOPIC.getTopic(),"修改巡检任务的状态"),
+		/**
+		 * 巡检任务状态改变
+		 */
+		IMC_TASK_STATUS_CHANGED("IMC_TASK_STATUS_CHANGED",MqTopicEnum.IMC_TOPIC.getTopic(),"巡检任务状态改变"),
+		/**
+		 * 通知服务商
+		 */
+		IMC_TASK_NOTIFY_FACILITATOR("IMC_TASK_NOTIFY_FACILITATOR",MqTopicEnum.IMC_TOPIC.getTopic(),"巡检任务状态改变"),
+		/**
+		 * 巡检任务子项状态改变
+		 */
+		IMC_ITEM_STATUS_CHANGED("IMC_ITEM_STATUS_CHANGED",MqTopicEnum.IMC_TOPIC.getTopic(),"巡检任务子项状态改变"),
+		/**
+		 * 维修工单状态改变
+		 */
+		MDMC_TASK_STATUS_CHANGED("MDMC_TASK_STATUS_CHANGED",MqTopicEnum.MDMC_TOPIC.getTopic(),"维修工单状态改变"),
+		/**
+		 * 发生报警
+		 */
+		AMC_ALARM_OCCUR("AMC_ALARM_OCCUR",MqTopicEnum.AMC_TOPIC.getTopic(),"发生报警"),
+		;
 		/**
 		 * The Tag.
 		 */
@@ -210,6 +241,8 @@ public class AliyunMqTopicConstants {
 		 */
 		public static final String UAC = buildUacConsumerTopics();
 
+		public static final String WEBSOCKET = buildWebSocketConsumerTopics();
+
 	}
 
 	private static String buildOpcConsumerTopics() {
@@ -254,6 +287,29 @@ public class AliyunMqTopicConstants {
 
 		return buildOpcConsumerTopics(topicObjList);
 
+	}
+
+	private static String buildWebSocketConsumerTopics(){
+		List<TopicObj> topicObjList = new ArrayList<>();
+
+		//IMC
+		Set<String> imcTagList = new HashSet<>();
+		imcTagList.add(MqTagEnum.IMC_TASK_STATUS_CHANGED.getTag());
+		imcTagList.add(MqTagEnum.IMC_ITEM_STATUS_CHANGED.getTag());
+		//MDMC
+		Set<String> mdmcTagList=new HashSet<>();
+		mdmcTagList.add(MqTagEnum.MDMC_TASK_STATUS_CHANGED.getTag());
+		//AMC
+		Set<String> amcTagList=new HashSet<>();
+		amcTagList.add(MqTagEnum.AMC_ALARM_OCCUR.getTag());
+
+		topicObjList.add(new TopicObj(MqTopicEnum.MDMC_TOPIC.getTopic(),mdmcTagList));
+
+		topicObjList.add(new TopicObj(MqTopicEnum.IMC_TOPIC.getTopic(),imcTagList));
+
+		topicObjList.add(new TopicObj(MqTopicEnum.AMC_TOPIC.getTopic(),amcTagList));
+
+		return buildOpcConsumerTopics(topicObjList);
 	}
 
 	private static String buildOpcConsumerTopics(List<TopicObj> topicList) {

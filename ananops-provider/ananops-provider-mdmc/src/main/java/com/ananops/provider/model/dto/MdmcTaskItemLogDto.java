@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Data
 @ApiModel
 public class MdmcTaskItemLogDto implements Serializable {
+    private static final long serialVersionUID = -6872931294973491007L;
     @ApiModelProperty("工单编号")
     private Long taskId;
 

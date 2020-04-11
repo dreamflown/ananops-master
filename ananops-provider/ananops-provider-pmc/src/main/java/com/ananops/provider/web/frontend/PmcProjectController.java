@@ -6,6 +6,7 @@ import com.ananops.core.support.BaseController;
 import com.ananops.core.utils.RequestUtil;
 import com.ananops.provider.model.domain.PmcProject;
 import com.ananops.provider.model.domain.PmcProjectUser;
+import com.ananops.provider.model.dto.PmcProReqQueryDto;
 import com.ananops.provider.model.dto.PmcProjectDto;
 import com.ananops.provider.service.PmcProjectService;
 import com.ananops.wrapper.WrapMapper;
@@ -60,6 +61,14 @@ public class PmcProjectController extends BaseController {
         return WrapMapper.ok(pmcProjectList);
     }
 
+    @PostMapping("/getProjectList")
+    @ApiOperation(httpMethod = "POST",value = "获取某个组织某种类型的项目列表")
+    public Wrapper<List<PmcProject>> getProjectList(@ApiParam(value = "分页排序参数") @RequestBody PmcProReqQueryDto pmcProReqQueryDto){
+        logger.info("获取某个组织某种类型的项目列表: pmcProReqQueryDto={}", pmcProReqQueryDto);
+        List<PmcProject> pmcProjectList = pmcProjectService.getProjectList(pmcProReqQueryDto);
+        return WrapMapper.ok(pmcProjectList);
+    }
+
     @PostMapping("/getProjectListWithPage")
     @ApiOperation(httpMethod = "POST", value = "分页获取所有项目列表")
     public Wrapper<PageInfo> getProjectListWithPage(@ApiParam(value = "分页排序参数") @RequestBody BaseQuery baseQuery) {
@@ -83,6 +92,14 @@ public class PmcProjectController extends BaseController {
         return WrapMapper.ok(pmcProjectList);
     }
 
+    @PostMapping("/getProjectByContractId/{contractId}")
+    @ApiOperation(httpMethod = "POST",value = "根据合同Id获取项目列表")
+    public Wrapper<List<PmcProject>> getProjectByContractId(@PathVariable Long contractId){
+        log.info("根据合同Id获取项目列表,contractId={}",contractId);
+        List<PmcProject> pmcProjectList  = pmcProjectService.getProjectByContractId(contractId);
+        return WrapMapper.ok(pmcProjectList);
+    }
+
     @PostMapping("/addProUser")
     @ApiOperation(httpMethod = "POST",value = "添加项目用户关联信息")
     public Wrapper addProUser(@RequestBody PmcProjectUser pmcProjectUser){
@@ -103,4 +120,11 @@ public class PmcProjectController extends BaseController {
         return WrapMapper.ok();
     }
 
+    @PostMapping("/getProjectCount/{groupId}")
+    @ApiOperation(httpMethod = "POST", value = "获取项目总数")
+    public Wrapper getProjectCount(@ApiParam(value = "组织id") @PathVariable Long groupId) {
+        log.info("获取项目总数");
+        int count = pmcProjectService.getProjectCount(groupId);
+        return WrapMapper.ok(count);
+    }
 }

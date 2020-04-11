@@ -6,20 +6,30 @@ import com.ananops.core.support.BaseController;
 import com.ananops.provider.model.domain.SpcCompany;
 import com.ananops.provider.model.dto.CompanyStatusDto;
 import com.ananops.provider.model.dto.ModifyCompanyStatusDto;
+import com.ananops.provider.model.dto.oss.ElementImgUrlDto;
+import com.ananops.provider.model.dto.oss.OptUploadFileReqDto;
+import com.ananops.provider.model.dto.oss.OptUploadFileRespDto;
 import com.ananops.provider.model.vo.CompanyVo;
 import com.ananops.provider.service.SpcCompanyService;
 import com.ananops.wrapper.WrapMapper;
 import com.ananops.wrapper.Wrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 服务商模块对外提供操作Company(公司)的Restful接口
@@ -97,6 +107,23 @@ public class SpcCompanyController extends BaseController {
     }
 
     /**
+     * 根据用户Id查询公司信息.
+     *
+     * @param userId the userId id
+     *
+     * @return the spc company by userId
+     */
+    @PostMapping(value = "/getSpcCompanyByUserId/{userId}")
+    @LogAnnotation
+    @ApiOperation(httpMethod = "POST", value = "根据用户Id（userId）查询公司信息")
+    public Wrapper<CompanyVo> getSpcCompanyByUserId(@ApiParam(name = "userId", value = "用户ID") @PathVariable Long userId) {
+        logger.info("getSpcCompanyByUserId - 根据用户Id查询公司信息. userId={}", userId);
+        CompanyVo uacCompany = spcCompanyService.queryByUserId(userId);
+        logger.info("getUacUserById - 根据用户Id查询公司信息. [OK] uacCompany={}", uacCompany);
+        return WrapMapper.ok(uacCompany);
+    }
+
+    /**
      * 根据公司名称模糊查询公司信息.
      *
      * @param companyName the company name
@@ -128,5 +155,40 @@ public class SpcCompanyController extends BaseController {
         LoginAuthDto loginAuthDto = getLoginAuthDto();
         spcCompanyService.saveUacCompany(companyVo, loginAuthDto);
         return WrapMapper.ok();
+    }
+
+    /**
+     * 上传公司相关的图片
+     *
+     * @param request HTTP请求
+     *
+     * @param optUploadFileReqDto HTTP请求参数
+     *
+     * @return 返回
+     */
+    @PostMapping(consumes = "multipart/form-data", value = "/uploadCompanyPicture")
+    @ApiOperation(httpMethod = "POST", value = "上传文件")
+    public List<OptUploadFileRespDto> uploadCompanyPicture(HttpServletRequest request, OptUploadFileReqDto optUploadFileReqDto) {
+        logger.info("uploadCompanyPicture - 上传文件. optUploadFileReqDto={}", optUploadFileReqDto);
+
+        String fileType = optUploadFileReqDto.getFileType();
+        String bucketName = optUploadFileReqDto.getBucketName();
+        Preconditions.checkArgument(StringUtils.isNotEmpty(fileType), "文件类型为空");
+        Preconditions.checkArgument(StringUtils.isNotEmpty(bucketName), "存储地址为空");
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        return spcCompanyService.uploadCompanyFile(multipartRequest, optUploadFileReqDto, getLoginAuthDto());
+    }
+
+    /**
+     * 根据服务商id下载服务商附件
+     * @param id
+     * @return
+     */
+    @PostMapping(value = "/getCompanyPicture/{id}")
+    @ApiOperation(httpMethod = "POST", value = "服务商附件下载")
+    public Wrapper<List<ElementImgUrlDto>> getCompanyPicture(@PathVariable Long id) {
+        List<ElementImgUrlDto> elementImgUrlDtoList = spcCompanyService.getCompanyFile(id);
+        logger.info("elementImgUrlDtoList："+elementImgUrlDtoList);
+        return WrapMapper.ok(elementImgUrlDtoList);
     }
 }

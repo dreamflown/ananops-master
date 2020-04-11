@@ -6,6 +6,7 @@ import com.ananops.provider.service.ImcTaskFeignApi;
 import com.ananops.wrapper.Wrapper;
 import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -75,6 +76,11 @@ public class ImcTaskFeignHystrix implements ImcTaskFeignApi {
 
     @Override
     public Wrapper<ImcTaskChangeStatusDto> acceptImcTaskByFacilitator(@ApiParam(name = "acceptImcTaskByTaskId",value = "服务商接单（巡检任务）")@RequestBody ConfirmImcTaskDto confirmImcTaskDto){
+        return null;
+    }
+
+    @Override
+    public Wrapper<List<TaskDto>> getImcTaskList(@PathVariable Long[] imcTaskIdList){
         return null;
     }
 }

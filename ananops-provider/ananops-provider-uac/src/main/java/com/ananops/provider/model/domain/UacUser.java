@@ -141,4 +141,18 @@ public class UacUser extends BaseEntity {
 	@ApiModelProperty(value = "用户所属的组织名称")
 	@Transient
 	private String groupName;
+
+	@ApiModelProperty(value = "用户所绑定的角色id")
+	@Transient
+	private Long roleId;
+
+	@ApiModelProperty(value = "用户所绑定的角色编码")
+	@Transient
+	private String roleCode;
+
+	@ApiModelProperty(value = "用户所绑定的角色名称")
+	@Transient
+	private String roleName;
+
+
 }

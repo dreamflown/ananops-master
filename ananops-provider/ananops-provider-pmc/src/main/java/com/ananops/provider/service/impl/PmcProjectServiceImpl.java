@@ -12,12 +12,18 @@ import com.ananops.provider.mapper.PmcProjectUserMapper;
 import com.ananops.provider.model.domain.PmcContract;
 import com.ananops.provider.model.domain.PmcProject;
 import com.ananops.provider.model.domain.PmcProjectUser;
+import com.ananops.provider.model.dto.PmcProReqQueryDto;
 import com.ananops.provider.model.dto.PmcProjectDto;
+import com.ananops.provider.model.dto.group.CompanyDto;
+import com.ananops.provider.model.service.UacGroupFeignApi;
+import com.ananops.provider.model.vo.GroupZtreeVo;
 import com.ananops.provider.service.PmcInspectTaskService;
 import com.ananops.provider.service.PmcProjectService;
+import com.ananops.wrapper.Wrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.models.auth.In;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -40,6 +46,9 @@ public class PmcProjectServiceImpl extends BaseService<PmcProject> implements Pm
     PmcProjectUserMapper pmcProjectUserMapper;
     @Resource
     PmcInspectTaskService pmcInspectTaskService;
+    @Resource
+    private UacGroupFeignApi uacGroupFeignApi;
+
 
 
     @Override
@@ -59,9 +68,20 @@ public class PmcProjectServiceImpl extends BaseService<PmcProject> implements Pm
             pmcProject.setPartyBName(pmcContract.getPartyBName());
 
             result = pmcProjectMapper.insertSelective(pmcProject);
+            //添加进关系表
+            PmcProjectUser pmcProjectUser = new PmcProjectUser();
+            pmcProjectUser.setProjectId(pmcProject.getId());
+            pmcProjectUser.setUserId(loginAuthDto.getUserId());
+            pmcProjectUserMapper.insertSelective(pmcProjectUser);
+
         } else if (pmcProject.isNew()) {  //虚拟项目
             pmcProject.setId(super.generateId());
             pmcProjectMapper.insertSelective(pmcProject);
+            //添加进关系表
+            PmcProjectUser pmcProjectUser = new PmcProjectUser();
+            pmcProjectUser.setProjectId(pmcProject.getId());
+            pmcProjectUser.setUserId(loginAuthDto.getUserId());
+            pmcProjectUserMapper.insertSelective(pmcProjectUser);
         } else {                    //更新项目信息
             result = pmcProjectMapper.updateByPrimaryKeySelective(pmcProject);
             if (result < 1) {
@@ -79,12 +99,16 @@ public class PmcProjectServiceImpl extends BaseService<PmcProject> implements Pm
 
     @Override
     public List<PmcProject> getProjectListByGroupId(Long groupId) {
+        CompanyDto companyDto = uacGroupFeignApi.getCompanyInfoById(groupId).getResult();
+        //公司ID
+        groupId = companyDto.getId();
         Example example = new Example(PmcProject.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("partyAId", groupId);
         Example.Criteria criteria2 = example.createCriteria();
         criteria2.andEqualTo("partyBId", groupId);
         example.or(criteria2);
+        example.setOrderByClause("created_time desc");
         List<PmcProject> pmcProjectList = pmcProjectMapper.selectByExample(example);
         return pmcProjectList;
     }
@@ -99,6 +123,11 @@ public class PmcProjectServiceImpl extends BaseService<PmcProject> implements Pm
     @Override
     public List<PmcProject> getProjectByUserId(Long userId) {
         return pmcProjectMapper.getProjectByUserId(userId);
+    }
+
+    @Override
+    public List<PmcProject> getProjectByContractId(Long contractId) {
+        return pmcProjectMapper.getProjectByContractId(contractId);
     }
 
     @Override
@@ -169,5 +198,42 @@ public class PmcProjectServiceImpl extends BaseService<PmcProject> implements Pm
         return  engineersId;
     }
 
+    @Override
+    public int getProjectCount(Long groupId) {
+        CompanyDto companyDto = uacGroupFeignApi.getCompanyInfoById(groupId).getResult();
+        //公司ID
+        groupId = companyDto.getId();
+        Example example = new Example(PmcProject.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("partyAId", groupId);
+        Example.Criteria criteria2 = example.createCriteria();
+        criteria2.andEqualTo("partyBId", groupId);
+        example.or(criteria2);
+        return pmcProjectMapper.selectCountByExample(example);
+    }
 
+    @Override
+    public List<PmcProject> getProjectList(PmcProReqQueryDto pmcProReqQueryDto) {
+        if (pmcProReqQueryDto.getGroupId() == null) {
+            throw new PmcBizException(ErrorCodeEnum.PMC10081026);
+        }
+        CompanyDto companyDto = uacGroupFeignApi.getCompanyInfoById(pmcProReqQueryDto.getGroupId()).getResult();
+        //公司ID
+        Long groupId = companyDto.getId();
+        Example example = new Example(PmcProject.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("partyAId", groupId);
+        if (pmcProReqQueryDto.getProjectType() != null) {
+            criteria.andEqualTo("projectType", pmcProReqQueryDto.getProjectType());
+        }
+        Example.Criteria criteria2 = example.createCriteria();
+        criteria2.andEqualTo("partyBId", groupId);
+        if (pmcProReqQueryDto.getProjectType() != null) {
+            criteria2.andEqualTo("projectType", pmcProReqQueryDto.getProjectType());
+        }
+        example.or(criteria2);
+        example.setOrderByClause("created_time desc");
+        List<PmcProject> pmcProjectList = pmcProjectMapper.selectByExample(example);
+        return pmcProjectList;
+    }
 }

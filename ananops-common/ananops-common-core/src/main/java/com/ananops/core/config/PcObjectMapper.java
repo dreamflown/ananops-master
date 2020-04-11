@@ -20,6 +20,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
 
 import java.util.List;
 
@@ -35,6 +37,17 @@ public class PcObjectMapper {
 
 	public static void buidMvcMessageConverter(List<HttpMessageConverter<?>> converters) {
 		MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+		jackson2HttpMessageConverter.setObjectMapper(getObjectMapper());
+		converters.add(jackson2HttpMessageConverter);
+	}
+
+	public static void buidMessageConverter(List<MessageConverter> converters) {
+		MappingJackson2MessageConverter jackson2MessageConverter = new MappingJackson2MessageConverter();
+		jackson2MessageConverter.setObjectMapper(getObjectMapper());
+		converters.add(jackson2MessageConverter);
+	}
+
+	public static ObjectMapper getObjectMapper() {
 		SimpleModule simpleModule = new SimpleModule();
 		simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
 		simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
@@ -44,8 +57,6 @@ public class PcObjectMapper {
 				.registerModule(new JavaTimeModule())
 				.registerModule(simpleModule);
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		jackson2HttpMessageConverter.setObjectMapper(objectMapper);
-		converters.add(jackson2HttpMessageConverter);
+		return objectMapper;
 	}
-
 }

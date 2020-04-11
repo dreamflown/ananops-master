@@ -13,7 +13,7 @@ import java.util.List;
 public class MdmcPageDto implements Serializable {
 
 
-
+    private static final long serialVersionUID = -2758697307053426556L;
     @ApiModelProperty("页码")
     private Integer pageNum;
 

@@ -5,7 +5,11 @@ import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.core.support.IService;
 import com.ananops.provider.model.domain.ImcInspectionTask;
 import com.ananops.provider.model.dto.*;
+import com.ananops.provider.model.dto.oss.ElementImgUrlDto;
+import com.ananops.provider.model.dto.oss.OptUploadFileRespDto;
+import com.github.pagehelper.PageInfo;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -49,6 +53,38 @@ public interface ImcInspectionTaskService extends IService<ImcInspectionTask> {
     ImcTaskChangeStatusDto acceptImcTaskByFacilitator(ConfirmImcTaskDto confirmImcTaskDto);//服务商接单
 
     ImcTaskChangeStatusDto denyImcTaskByPrincipal(ImcTaskChangeStatusDto imcTaskChangeStatusDto);//否决一项巡检任务
+
+    Integer getImcTaskNumberByUserIdAndRole(TaskQueryDto taskQueryDto);//根据用户id和用户角色获取全部的巡检任务数目
+
+    PageInfo getTaskByStatusAndPage(TaskQueryDto taskQueryDto);
+
+    PageInfo getTaskByProjectIdAndPage(TaskQueryDto taskQueryDto);
+
+    PageInfo getTaskByUserIdAndPage(TaskQueryDto taskQueryDto);
+
+    PageInfo getTaskByUserIdAndStatusAndPage(TaskQueryDto taskQueryDto);
+
+    PageInfo getTaskByFacilitatorIdAndPage(TaskQueryDto taskQueryDto);
+
+    PageInfo getTaskByFacilitatorIdAndStatusAndPage(TaskQueryDto taskQueryDto);
+
+    PageInfo getAllUnauthorizedTaskByPrincipalIdAndPage(TaskQueryDto taskQueryDto);
+
+    PageInfo getAllDeniedTaskByPrincipalIdAndPage(TaskQueryDto taskQueryDto);
+
+    Integer getItemNumberByTaskId(Long taskId);
+
+    List<UndistributedImcTaskDto> queryAllUndistributedTask();
+
+    OptUploadFileRespDto generateImcTaskPdf(Long taskId, LoginAuthDto loginAuthDto);
+
+    List<ElementImgUrlDto> getReportUrlList(Long taskId,LoginAuthDto loginAuthDto);
+
+    PageInfo getAllUnDistributedTask(LoginAuthDto loginAuthDto,TaskQueryDto taskQueryDto);
+
+    PageInfo getAllUnConfirmedTask(LoginAuthDto loginAuthDto,TaskQueryDto taskQueryDto);
+
+    PageInfo getAllFinishedTaskByFacilitatorIdAndPage(LoginAuthDto loginAuthDto,TaskQueryDto taskQueryDto);
 //    List<ImcInspectionTask> getTaskByFacilitatorId(TaskQueryDto taskQueryDto);//根据服务商id查询对应的巡检任务
 //
 //    List<ImcInspectionTask> getTaskByFacilitatorIdAndStatus(TaskQueryDto taskQueryDto);//根据服务商id查询指定状态的巡检任务

@@ -1,8 +1,8 @@
 package com.ananops.provider.web.rpc;
 
 import com.ananops.core.support.BaseController;
-import com.ananops.provider.mapper.BasebillMapper;
-import com.ananops.provider.model.domain.Basebill;
+import com.ananops.provider.mapper.BmcBillMapper;
+import com.ananops.provider.model.domain.BmcBill;
 import com.ananops.provider.service.BillFeignApi;
 import com.ananops.wrapper.WrapMapper;
 import com.ananops.wrapper.Wrapper;
@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
 import tk.mybatis.mapper.entity.Example;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,23 +22,23 @@ import java.util.List;
 @Api(value = "API - BillFeignClient", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class BillFeignClient extends BaseController implements BillFeignApi {
     @Autowired
-    BasebillMapper basebillMapper;
+    BmcBillMapper bmcBillMapper;
 
     @Override
     @ApiOperation(httpMethod = "GET", value = "根据工单ID查询金额")
 
-    public Wrapper<Float> getAmountByWorkOrderId(Long workOrderId) {
-        List<Basebill> list=new ArrayList<>();
-        Example example = new Example(Basebill.class);
+    public Wrapper<BigDecimal> getAmountByWorkOrderId(Long workOrderId) {
+        List<BmcBill> list=new ArrayList<>();
+        Example example = new Example(BmcBill.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo(String.valueOf(workOrderId));
-        list=basebillMapper.selectByExample(example);
-        Basebill basebill1=new Basebill();
+        list= bmcBillMapper.selectByExample(example);
+        BmcBill bmcBill=new BmcBill();
         if(list!=null&&list.size()>0){
-            for (Basebill basebill:list){
-                basebill1=basebill;
+            for (BmcBill bmcBill1:list){
+                bmcBill=bmcBill1;
             }
         }
-        return WrapMapper.ok(basebill1.getAmount());
+        return WrapMapper.ok(bmcBill.getAmount());
     }
 }

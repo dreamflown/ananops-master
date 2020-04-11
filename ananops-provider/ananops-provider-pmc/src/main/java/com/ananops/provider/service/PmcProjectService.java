@@ -5,6 +5,7 @@ import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.core.support.IService;
 import com.ananops.provider.model.domain.PmcProject;
 import com.ananops.provider.model.domain.PmcProjectUser;
+import com.ananops.provider.model.dto.PmcProReqQueryDto;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -79,4 +80,29 @@ public interface PmcProjectService extends IService<PmcProject> {
      * @return
      */
     List<Long> getEngineersIdByProjectId(Long projectId);
+
+    /**
+     * 获取项目总数
+     * @param groupId
+     * @return
+     */
+    int getProjectCount(Long groupId);
+
+    /**
+     * 根据合同Id获取项目列表
+     *
+     * @param contractId 合同Id
+     *
+     * @return 返回项目列表
+     */
+    List<PmcProject> getProjectByContractId(Long contractId);
+
+    /**
+     * 根据项目类型+公司组织Id查询项目列表
+     *
+     * @param pmcProReqQueryDto
+     *
+     * @return
+     */
+    List<PmcProject> getProjectList(PmcProReqQueryDto pmcProReqQueryDto);
 }

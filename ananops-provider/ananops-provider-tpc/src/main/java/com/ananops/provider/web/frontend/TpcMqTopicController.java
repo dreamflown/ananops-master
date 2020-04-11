@@ -12,7 +12,10 @@ import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.base.dto.UpdateStatusDto;
 import com.ananops.core.annotation.LogAnnotation;
 import com.ananops.core.support.BaseController;
+import com.ananops.provider.model.domain.TpcMqTag;
 import com.ananops.provider.model.domain.TpcMqTopic;
+import com.ananops.provider.model.dto.AddTopicDto;
+import com.ananops.provider.model.dto.TopicBindTagDto;
 import com.ananops.provider.model.vo.TpcMqTopicVo;
 import com.ananops.provider.service.TpcMqTopicService;
 import com.ananops.wrapper.WrapMapper;
@@ -43,6 +46,26 @@ public class TpcMqTopicController extends BaseController {
 	@Resource
 	private TpcMqTopicService tpcMqTopicService;
 
+	/**
+	 * 添加主题
+	 * @param addTopicDto
+	 * @return
+	 */
+	@PostMapping(value = "/addMqTopic")
+	@ApiOperation(httpMethod = "POST", value = "新建MQ topic")
+	public Wrapper<TpcMqTopic> addMqTopic(@ApiParam(name = "topic", value = "MQ-Topic") @RequestBody AddTopicDto addTopicDto){
+		LoginAuthDto loginAuthDto = super.getLoginAuthDto();
+		logger.info("新建主题addTopicDto={}", addTopicDto);
+		return WrapMapper.ok(tpcMqTopicService.addMqTopic(addTopicDto,loginAuthDto));
+	}
+
+	@PostMapping(value = "/topicBindTag")
+	@ApiOperation(httpMethod = "POST", value = "为topic绑定tag")
+	public Wrapper<TpcMqTag> topicBindTag(@ApiParam(name = "tag", value = "MQ-Tag") @RequestBody TopicBindTagDto topicBindTagDto){
+		LoginAuthDto loginAuthDto = super.getLoginAuthDto();
+		logger.info("新建主题topicBindTag={}", topicBindTagDto);
+		return WrapMapper.ok(tpcMqTopicService.topicBindTag(topicBindTagDto,loginAuthDto));
+	}
 
 	/**
 	 * 查询MQ topic列表.

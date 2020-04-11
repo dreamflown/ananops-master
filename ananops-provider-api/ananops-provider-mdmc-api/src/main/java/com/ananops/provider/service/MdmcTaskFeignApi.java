@@ -8,6 +8,7 @@ import com.ananops.provider.model.dto.MdmcPageDto;
 import com.ananops.provider.service.hystrix.MdmcTaskFeignHystrix;
 import com.ananops.security.feign.OAuth2FeignAutoConfiguration;
 import com.ananops.wrapper.Wrapper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +36,7 @@ public interface MdmcTaskFeignApi {
     Wrapper<List<MdmcListDto>> getTaskListByIdAndStatusArrary(@RequestBody MdmcStatusArrayDto statusArrayDto);
     
     @PostMapping(value = "api/mdmcTask/getTaskList")
-    Wrapper<MdmcPageDto> getTaskList(@RequestBody MdmcQueryDto queryDto);
+    Wrapper<PageInfo> getTaskList(@RequestBody MdmcQueryDto queryDto);
 
     @PostMapping(value = "api/mdmcTask/saveTask")
     Wrapper saveTask(@RequestBody MdmcFeignTaskDto mdmcFeignTaskDto);
@@ -60,4 +61,7 @@ public interface MdmcTaskFeignApi {
 
     @PostMapping(value = "/api/mamcTask/payment/done/{taskId}")
     Wrapper<Object> updateStatusAfterPaymentDone(@PathVariable("taskId") Long taskId, @RequestBody LoginAuthDto loginAuthDto);
+
+    @PostMapping(value = "/api/mdmcTask/getMdmcTaskList/{mdmcTaskIdList}")
+    Wrapper<List<MdmcTask>> getMdmcTaskList(@PathVariable("mdmcTaskIdList") Long[] mdmcTaskIdList);
 }

@@ -22,6 +22,7 @@
     <result column="alarm_location" property="alarmLocation" jdbcType="VARCHAR" />
     <result column="alarm_longitude" property="alarmLongitude" jdbcType="DECIMAL" />
     <result column="alarm_latitude" property="alarmLatitude" jdbcType="DECIMAL" />
+    <result column="alarm_photo" property="alarmPhoto" jdbcType="VARCHAR" />
     <result column="last_occur_time" property="lastOccurTime" jdbcType="TIMESTAMP" />
     <result column="description" property="description" jdbcType="VARCHAR" />
     <result column="group_id" property="groupId" jdbcType="BIGINT" />

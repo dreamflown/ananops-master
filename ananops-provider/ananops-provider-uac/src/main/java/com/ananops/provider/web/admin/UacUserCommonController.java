@@ -252,4 +252,12 @@ public class UacUserCommonController extends BaseController {
 		List<UserVo> userVoList = uacUserService.getSubordinateUserListByUserId(userId);
 		return WrapMapper.ok(userVoList);
 	}
+
+	@GetMapping(value = "/getPGIdByUserId/{userId}")
+	@ApiOperation(httpMethod = "GET", value = "根据用户id获取用户领导的groupId")
+	public Wrapper<Long> getPGIdByUserId(@ApiParam(name = "userId", value = "用户id")@PathVariable(value = "userId") Long userId) {
+		logger.info("根据userId获取下级用户列表");
+		Long pid = uacUserService.getPGIdByUserId(userId);
+		return WrapMapper.ok(pid);
+	}
 }

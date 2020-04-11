@@ -1,82 +1,244 @@
 package com.ananops.provider.web;
 
-import com.ananops.base.enums.ErrorCodeEnum;
-import com.ananops.provider.exceptions.TpcBizException;
-import com.ananops.provider.model.domain.Basebill;
-import com.ananops.provider.model.dto.BillCreateDto;
-import com.ananops.provider.model.dto.BillModifyAmountDto;
-import com.ananops.provider.model.dto.PmcPayDto;
+import com.ananops.core.support.BaseController;
+import com.ananops.provider.model.domain.BmcBill;
+import com.ananops.provider.model.dto.*;
+import com.ananops.provider.model.dto.PmcContractDto;
+import com.ananops.provider.model.dto.PmcProjectDto;
 import com.ananops.provider.service.PmcContractFeignApi;
+import com.ananops.provider.service.PmcProjectFeignApi;
 import com.ananops.provider.service.impl.BaseServiceImpl;
 import com.ananops.provider.utils.WrapMapper;
 import com.ananops.provider.utils.Wrapper;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bill")
-@Slf4j
-public class BaseBillController {
+@RequestMapping(value = "/bill", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@Api(value = "WEB - BaseBillController", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+public class BaseBillController extends BaseController {
 
+//    @Resource
+//    RdcDeviceOrderFeignApi rdcDeviceOrderFeignApi;
     @Resource
     PmcContractFeignApi pmcContractFeignApi;
     @Resource
+    PmcProjectFeignApi pmcProjectFeignApi;
+    @Resource
     BaseServiceImpl baseServiceImpl;
 
+    /**
+     * 创建账单
+     * @param billCreateDto
+     * @return
+     */
     @PostMapping(value = "/create")
     @ApiOperation(httpMethod = "POST",value = "创建账单")
-    public Wrapper<String> createNew(@ApiParam(name = "body",value="账单信息") @RequestBody BillCreateDto abc){
-        com.ananops.wrapper.Wrapper<List<PmcPayDto>> list = pmcContractFeignApi.getContactByAB(Long.valueOf(abc.getUserid()),Long.valueOf(abc.getSupplier()));
-        if (list.getResult() == null) {
-            log.info("该用户与该服务商没有合同");
+    public Wrapper<String> createNew(@ApiParam(name = "body",value="账单信息") @RequestBody BillCreateDto billCreateDto){
+        // 判断projectId是否为空
+        if (billCreateDto.getProjectId() == null){
+            return WrapMapper.error("创建工单时传入的参数projectId为空！getProjectId = "+billCreateDto.getProjectId());
         }
-        List<PmcPayDto> payDtoList = new ArrayList<>(list.getResult());
-        for (PmcPayDto payDto : payDtoList) {
-            abc.setPayDto(payDto);
+        // 通过projectId找到project，再通过project信息找到ContractId，然后找到contract信息
+        PmcProjectDto pmcProjectDto = pmcProjectFeignApi.getProjectByProjectId(billCreateDto.getProjectId()).getResult();
+        if (pmcProjectDto == null){
+            return WrapMapper.error("getProjectByProjectId获得的项目信息为空！projectId = "+billCreateDto.getProjectId());
         }
-//        PmcPayDto payDto=new PmcPayDto();
-//        payDto.setPaymentType(2);
-//        payDto.setPaymentMoney(Long.valueOf(1000));
-//        abc.setPayDto(payDto);
-        baseServiceImpl.insert(abc);
+        if (pmcProjectDto.getContractId() == null){
+            return WrapMapper.error("pmcProjectDto中的合同id为空！pmcProjectDto.getContractId() = "+pmcProjectDto.getContractId());
+        }
+        PmcContractDto pmcContractDto = pmcContractFeignApi.getContractById(pmcProjectDto.getContractId()).getResult();
+        if (pmcContractDto == null){
+            return WrapMapper.error("通过getContractById获得的合同信息为空！ContractId = "+pmcProjectDto.getContractId());
+        }
+        BigDecimal servicePrice = pmcContractDto.getPaymentMoney();
+        String transactionMethod = pmcContractDto.getPaymentType().toString();
+
+        if (billCreateDto.getDeviceDtos() != null){
+            List<DeviceDto> deviceDtoList = billCreateDto.getDeviceDtos();
+            List<Long> deviceIds = new ArrayList<>();
+            for (DeviceDto deviceDto : deviceDtoList) {
+                deviceIds.add(deviceDto.getDeviceId());
+            }
+        }
+//        com.ananops.wrapper.Wrapper<Object> objects = rdcDeviceOrderFeignApi.getPriceOfDevices(deviceIds);
+//        List<JSONObject> jsonObjects = (List<JSONObject>)objects.getResult();
+        BigDecimal devicePrice = BigDecimal.valueOf(0);
+//        for (JSONObject object : jsonObjects) {
+//            devicePrice += object.getBigDecimal("price").floatValue();
+//        }
+
+        baseServiceImpl.insert(billCreateDto, devicePrice, servicePrice, transactionMethod);
         return  WrapMapper.ok("success");
     }
 
-    @GetMapping(value = "/getallbyuser/{userid}")
+    /**
+     * 用于实时获取创建账单前展示给用户的总金额
+     * @param billCreateDto
+     * @return
+     */
+    @PostMapping(value = "/createFakeOrder")
+    @ApiOperation(httpMethod = "POST",value = "创建账单")
+    public Wrapper<BigDecimal> createFakeNew(@ApiParam(name = "body",value="账单信息") @RequestBody BillCreateDto billCreateDto){
+        logger.info("createFakeNew - 创建账单. billCreateDto={}", billCreateDto);
+        // 判断projectId是否为空
+        if (billCreateDto.getProjectId() == null){
+            return WrapMapper.error("创建工单时传入的参数projectId为空！getProjectId = "+billCreateDto.getProjectId());
+        }
+        // 通过projectId找到project，再通过project信息找到ContractId，然后找到contract信息
+        Long contractId = getContractId(billCreateDto.getProjectId());
+//        if (pmcProjectDto == null){
+//            return WrapMapper.error("getProjectByProjectId获得的项目信息为空！projectId = "+billCreateDto.getProjectId());
+//        }
+//        if (pmcProjectDto.getContractId() == null){
+//            return WrapMapper.error("pmcProjectDto中的合同id为空！pmcProjectDto.getContractId() = "+pmcProjectDto.getContractId());
+//        }
+//        PmcContractDto pmcContractDto = pmcContractFeignApi.getContractById(contractId).getResult();
+//        if (pmcContractDto == null){
+//            return WrapMapper.error("通过getContractById获得的合同信息为空！ContractId = "+contractId);
+//        }
+
+        BigDecimal servicePrice = getServicePrice(contractId);
+//        List<DeviceDto> deviceDtoList = billCreateDto.getDeviceDtos();
+//        List<Long> deviceIds = new ArrayList<>();
+//        for (DeviceDto deviceDto : deviceDtoList) {
+//            deviceIds.add(deviceDto.getDeviceId());
+//        }
+//        com.ananops.wrapper.Wrapper<Object> objects = rdcDeviceOrderFeignApi.getPriceOfDevices(deviceIds);
+//        List<JSONObject> jsonObjects = (List<JSONObject>)objects.getResult();
+        BigDecimal devicePrice = BigDecimal.valueOf(0);
+//        for (JSONObject object : jsonObjects) {
+//            devicePrice += object.getBigDecimal("price").floatValue();
+//        }
+        if (servicePrice != null) {
+            return WrapMapper.ok(servicePrice.add(devicePrice));
+        }
+        return WrapMapper.ok(devicePrice);
+    }
+
+    /**
+     * 一个小方法，用于获取合同ID
+     * @param projectId 项目ID
+     * @return 合同ID
+     */
+    public Long getContractId(Long projectId){
+        return pmcProjectFeignApi.getProjectByProjectId(projectId).getResult().getContractId();
+    }
+
+    /**
+     * 一个小方法，用于获取服务金额
+     * @param contractId 合同ID
+     * @return 服务金额
+     */
+    public BigDecimal getServicePrice(Long contractId){
+        return pmcContractFeignApi.getContractById(contractId).getResult().getPaymentMoney();
+    }
+
+    /**
+     * 根据用户ID获取该用户下所产生的所有账单
+     * @param userId 用户ID
+     * @return 一个包含账单所有信息的LIST
+     */
+    @GetMapping(value = "/getAllByUser/{userId}")
     @ApiOperation(httpMethod = "GET",value = "根据用户id获取所有账单")
-    public  Wrapper<List<Basebill>> getAllBillByUserId(@ApiParam(name = "userid",value = "用户id") @RequestParam Long userid){
-        return WrapMapper.ok(baseServiceImpl.getAllBillByUserId(userid.toString()));
+    public  Wrapper<List<BillDisplayDto>> getAllBillByUserId(@ApiParam(name = "userId",value = "用户id") @PathVariable Long userId){
+        return WrapMapper.ok(baseServiceImpl.getAllBillByUserId(userId));
     }
 
-    @GetMapping(value = "/getamountbyworkorder/{workorderid}")
+    /**
+     * 用于通过用户ID和账单状态获取该用户下的所有已完成账单
+     * @param userId 用户ID
+     * @param state 账单状态
+     * @return 包含已完成账单所有信息的LIST
+     */
+    @GetMapping(value="/getBillsByUserIdAndState/{userId}/{state}")
+    @ApiOperation(httpMethod = "GET",value = "根据用户id和账单状态获取所有已完成账单")
+    public Wrapper<List<BillDisplayDto>> getBillsByUserIdAndState(@ApiParam(name = "userId",value = "用户id") @RequestParam Long userId,
+                                                         @ApiParam(name = "state",value = "账单状态") @RequestParam String state){
+        return WrapMapper.ok(baseServiceImpl.getBillsByUserIdAndState(userId,state));
+    }
+
+    @GetMapping(value="/getMoneySumByUserIdYearMonthAndLength/{userId}/{year}/{month}/{length}")
+    @ApiOperation(httpMethod = "GET",value = "根据用户ID、年、月份以及时间跨度来获取账单的统计金额")
+    public Wrapper<Object> getMoneySumByUserIdMonthAndLength(@ApiParam(name="userId",value="用户id") @RequestParam Long userId,
+                                                  @ApiParam(name="year",value="年份") @RequestParam int year,
+                                                  @ApiParam(name="month",value="月份") @RequestParam int month,
+                                                  @ApiParam(name="length",value="时间跨度") @RequestParam int length){
+        return WrapMapper.ok(baseServiceImpl.getMoneySumByUserIdYearMonthAndLength(userId, year, month, length));
+    }
+
+    @GetMapping(value="/getMoneySumByUserIdYearAndMonth/{userId}/{year}/{month}")
+    @ApiOperation(httpMethod = "GET",value = "根据用户ID、年、月份来获取账单的统计金额")
+    public Wrapper<BigDecimal> getMoneySumByUserIdAndMonth(@ApiParam(name="userId",value="用户id") @RequestParam Long userId,
+                                                             @ApiParam(name="year",value="年份") @RequestParam int year,
+                                                             @ApiParam(name="month",value="月份") @RequestParam int month){
+        return WrapMapper.ok(baseServiceImpl.getMoneySumByUserIdYearAndMonth(userId, year, month));
+    }
+
+    @GetMapping(value = "/getBillNumByUserId/{userId}")
+    @ApiOperation(httpMethod = "GET",value = "根据用户id获取账单数量")
+    public Wrapper<Integer> getBillNumByUserId(@ApiParam(name = "userId",value = "用户id") @RequestParam Long userId){
+        return WrapMapper.ok(baseServiceImpl.getBillNumByUserId(userId));
+    }
+
+    @GetMapping(value = "/getBillNumByUserIdAndState/{userId}/{state}")
+    @ApiOperation(httpMethod = "GET",value = "根据用户id和支付状态获取账单数量")
+    public Wrapper<Integer> getBillNumByUserIdAndState(@ApiParam(name = "userId",value = "用户id") @RequestParam Long userId,
+                                                     @ApiParam(name = "state",value = "状态") @RequestParam String state){
+        return WrapMapper.ok(baseServiceImpl.getBillNumByUserIdAndState(userId, state));
+    }
+
+    @GetMapping(value = "/getBillNumByUserIdAndTransactionMethod/{userId}/{transactionMethod}")
+    @ApiOperation(httpMethod = "GET",value = "根据用户id和交易方式获取帐单数量")
+    public Wrapper<Integer> getBillNumByUserIdAndTransactionMethod(@ApiParam(name = "userId",value = "用户id") @RequestParam Long userId,
+                                                       @ApiParam(name = "transactionMethod",value = "交易方式") @RequestParam String transactionMethod){
+        return WrapMapper.ok(baseServiceImpl.getBillNumByUserIdAndTransactionMethod(userId, transactionMethod));
+    }
+
+    @GetMapping(value = "/getBillNumByUserIdAndAmount/{userId}/{amount}")
+    @ApiOperation(httpMethod = "GET",value = "根据用户id和预约金额获取账单数量")
+    public Wrapper<Integer> getBillNumByUserIdAndAmount(@ApiParam(name = "userId",value = "用户id") @RequestParam Long userId,
+                                                                   @ApiParam(name = "amount",value = "交易方式") @RequestParam BigDecimal amount){
+        return WrapMapper.ok(baseServiceImpl.getBillNumByUserIdAndAmount(userId, amount));
+    }
+
+    @PostMapping(value = "/getBillById/{id}")
+    @ApiOperation(httpMethod = "POST",value = "根据账单id获取账单")
+    public  Wrapper<BillDisplayDto> getBillById(@PathVariable Long id){
+        return WrapMapper.ok(baseServiceImpl.getOneBillById(id));
+    }
+
+    @GetMapping(value = "/getAmountByWorkOrder/{workOrderId}")
     @ApiOperation(httpMethod = "GET",value = "根据工单id获取金额")
-    public Wrapper<Float> getAmountByworkorderid(@ApiParam(name = "workorderid",value = "工单id") @RequestParam Long workorderid){
-        return WrapMapper.ok(baseServiceImpl.getAmountByworkorderid(workorderid.toString()));
+    public Wrapper<BigDecimal> getAmountByWorkOrderId(@ApiParam(name = "workOrderId",value = "工单id") @RequestParam Long workOrderId){
+        return WrapMapper.ok(baseServiceImpl.getAmountByWorkOrderId(workOrderId));
     }
 
-    @PutMapping(value = "/modifyamount")
+    @PutMapping(value = "/modifyAmount")
     @ApiOperation(httpMethod = "PUT",value = "修改金额")
-    public void modifyAmount(@ApiParam(name = "modifyamount",value = "修改金额") @RequestBody BillModifyAmountDto billModifyAmountDto){
-        Basebill basebill = baseServiceImpl.getBillById(billModifyAmountDto.getId());
-        baseServiceImpl.modifyAmount(basebill, billModifyAmountDto.getModifyAmount());
+    public void modifyAmount(@ApiParam(name = "modifyAmount",value = "修改金额") @RequestBody BillModifyAmountDto billModifyAmountDto){
+        BmcBill bmcBill = baseServiceImpl.getBillById(billModifyAmountDto.getId());
+        baseServiceImpl.modifyAmount(bmcBill, billModifyAmountDto.getModifyAmount());
     }
 
-    @GetMapping(value = "/getubill/{userid}/{state}")
+    @GetMapping(value = "/getUBill/{userId}/{state}")
     @ApiOperation(httpMethod = "GET",value = "根据状态及用户id获取账单")
-    public Wrapper<List<Basebill>> getAllUBillBystate(@ApiParam(name = "userid",value = "用户id") @RequestParam Long userid,
-                                             @ApiParam(name = "state",value = "状态") @RequestParam String state){
-        return WrapMapper.ok(baseServiceImpl.getAllUBillBystate(userid.toString(), state));
+    public Wrapper<List<BmcBill>> getAllUBillByState(@ApiParam(name = "userId",value = "用户id") @RequestParam Long userId,
+                                                      @ApiParam(name = "state",value = "状态") @RequestParam String state){
+        return WrapMapper.ok(baseServiceImpl.getAllUBillByState(userId, state));
     }
 
-    @GetMapping(value = "/getBillByWorkOrderId/{workorderid}")
+    @GetMapping(value = "/getBillByWorkOrderId/{workOrderId}")
     @ApiOperation(httpMethod = "GET",value = "根据状态及用户id获取账单")
-    public Wrapper<List<Basebill>> getBillByWorkOrderId(@ApiParam(name = "workorderid",value = "工单id") @RequestParam Long workorderid){
-        return WrapMapper.ok(baseServiceImpl.getBillByWorkOrderId(workorderid.toString()));
+    public Wrapper<List<BmcBill>> getBillByWorkOrderId(@ApiParam(name = "workOrderId",value = "工单id") @RequestParam Long workOrderId){
+        return WrapMapper.ok(baseServiceImpl.getBillByWorkOrderId(workOrderId));
     }
 }

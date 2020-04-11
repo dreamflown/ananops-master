@@ -4,10 +4,13 @@ import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.core.support.IService;
 import com.ananops.provider.model.domain.SpcCompany;
 import com.ananops.provider.model.dto.CompanyDto;
-import com.ananops.provider.model.dto.CompanyRegisterDto;
 import com.ananops.provider.model.dto.CompanyStatusDto;
 import com.ananops.provider.model.dto.ModifyCompanyStatusDto;
+import com.ananops.provider.model.dto.oss.ElementImgUrlDto;
+import com.ananops.provider.model.dto.oss.OptUploadFileReqDto;
+import com.ananops.provider.model.dto.oss.OptUploadFileRespDto;
 import com.ananops.provider.model.vo.CompanyVo;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 
@@ -35,14 +38,6 @@ public interface SpcCompanyService extends IService<SpcCompany> {
      * @return
      */
     List<SpcCompany> queryAllCompanys(SpcCompany spcCompany);
-
-    /**
-     * 注册服务商
-     *
-     * @param company
-     *
-     */
-    void register(CompanyRegisterDto company);
 
     /**
      * 根据公司Id修改公司状态
@@ -88,4 +83,46 @@ public interface SpcCompanyService extends IService<SpcCompany> {
      * @return 返回公司信息
      */
     List<CompanyVo> queryByLikeCompanyName(String companyName);
+
+    /**
+     * 服务商初始注册
+     *
+     * @param companyDto
+     *
+     * @return
+     */
+    int registerNew(CompanyDto companyDto);
+
+    /**
+     * 上传公司相关文件
+     *
+     * @param multipartRequest
+     *
+     * @param optUploadFileReqDto
+     *
+     * @param loginAuthDto
+     *
+     * @param b
+     *
+     * @return
+     */
+    List<OptUploadFileRespDto> uploadCompanyFile(MultipartHttpServletRequest multipartRequest, OptUploadFileReqDto optUploadFileReqDto, LoginAuthDto loginAuthDto);
+
+    /**
+     * 下载服务商相关附件
+     *
+     * @param id
+     *
+     * @return
+     */
+    List<ElementImgUrlDto> getCompanyFile(Long id);
+
+    /**
+     * 根据用户Id查询公司详细信息
+     *
+     * @param userId 用户Id
+     *
+     * @return 返回公司详情
+     */
+    CompanyVo queryByUserId(Long userId);
 }

@@ -11,6 +11,7 @@ package com.ananops.provider.mapper;
 import com.ananops.core.mybatis.MyMapper;
 import com.ananops.provider.model.domain.UacUserToken;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -48,4 +49,15 @@ public interface UacUserTokenMapper extends MyMapper<UacUserToken> {
 	 * @return the list
 	 */
 	List<Long> listOffLineTokenId();
+
+	/**
+	 * 查找给定的userId集合中当前状态下的Token
+	 *
+	 * @param userToken 用户Token
+	 *
+	 * @param userIds 用户Id集合
+	 *
+	 * @return 用户Token集合
+	 */
+	List<UacUserToken> selectTokenListInUserIds(@Param("userToken") UacUserToken userToken, @Param("userIds") List<Long> userIds);
 }

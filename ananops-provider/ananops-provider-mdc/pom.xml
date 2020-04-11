@@ -32,6 +32,10 @@
             <artifactId>ananops-provider-mdc-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.ananops.provider.api</groupId>
+            <artifactId>ananops-provider-uac-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>

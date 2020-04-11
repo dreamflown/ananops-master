@@ -62,7 +62,7 @@ public class OptQiniuOssServiceImpl implements OpcOssService {
 	@Resource
 	private StringRedisTemplate srt;
 
-	private static final String OPEN_IMG_BUCKET = "ananops-media-file";
+	private static final String OPEN_IMG_BUCKET = "open-img-ananops";
 
 	@Override
 	@Retryable(value = Exception.class, backoff = @Backoff(delay = 5000, multiplier = 2))
@@ -122,7 +122,7 @@ public class OptQiniuOssServiceImpl implements OpcOssService {
 	}
 
 	@Override
-	public OptUploadFileRespDto uploadFile(byte[] uploadBytes, String fileName, String filePath, String bucketName) throws IOException {
+	public OptUploadFileRespDto uploadFile(byte[] uploadBytes, String fileName, String fileType, String filePath, String bucketName) throws IOException {
 		log.info("uploadFile - 上传文件. fileName={}, bucketName={}", fileName, bucketName);
 
 		Preconditions.checkArgument(uploadBytes != null, "读取文件失败");
@@ -130,9 +130,10 @@ public class OptQiniuOssServiceImpl implements OpcOssService {
 		Preconditions.checkArgument(StringUtils.isNotEmpty(filePath), "文件路径不能为空");
 		Preconditions.checkArgument(StringUtils.isNotEmpty(bucketName), "存储节点不能为空");
 
-		InputStream is = new ByteArrayInputStream(uploadBytes);
-		String inputStreamFileType = FileTypeUtil.getType(is);
-		String newFileName = UniqueIdGenerator.generateId() + "." + inputStreamFileType;
+//		InputStream is = new ByteArrayInputStream(uploadBytes);
+//		String inputStreamFileType = FileTypeUtil.getType(is);
+//		String newFileName = UniqueIdGenerator.generateId() + "." + inputStreamFileType;
+		String newFileName = UniqueIdGenerator.generateId() + "." + fileType;
 
 		// 检查数据大小
 		this.checkFileSize(uploadBytes);
@@ -149,7 +150,7 @@ public class OptQiniuOssServiceImpl implements OpcOssService {
 			fileUrl = ananOpsProperties.getQiniu().getOss().getPublicHost() + "/" + filePath + newFileName;
 		} else {
 			String domainUrl = ananOpsProperties.getQiniu().getOss().getPrivateHost();
-			fileUrl = this.getFileUrl(domainUrl, fileName);
+			fileUrl = this.getFileUrl(domainUrl, filePath + newFileName);
 		}
 		OptUploadFileRespDto result = new OptUploadFileRespDto();
 		result.setAttachmentUrl(fileUrl);

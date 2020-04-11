@@ -9,6 +9,7 @@ import com.ananops.provider.service.MdmcTaskLogService;
 import com.ananops.provider.service.MdmcTaskService;
 import com.ananops.wrapper.WrapMapper;
 import com.ananops.wrapper.Wrapper;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @RefreshScope
@@ -39,6 +41,18 @@ public class MdmcTaskFeiginClient extends BaseController implements MdmcTaskFeig
         MdmcTask task = taskService.getTaskByTaskId(taskId);
         return WrapMapper.ok(task);
     }
+
+    @Override
+    @ApiOperation(httpMethod = "POST",value = "根据任务的ID列表，获取对应的全部的任务详情")
+    public Wrapper<List<MdmcTask>> getMdmcTaskList(@PathVariable Long[] mdmcTaskIdList){
+        List<MdmcTask> mdmcTaskList = new ArrayList<>();
+        for(int i=0;i<mdmcTaskIdList.length;i++){
+            Long taskId = mdmcTaskIdList[i];
+            MdmcTask task = taskService.getTaskByTaskId(taskId);
+            mdmcTaskList.add(task);
+        }
+        return WrapMapper.ok(mdmcTaskList);
+    }
     
     @ApiOperation(httpMethod = "POST",value = "返回全部工单列表")
     public Wrapper<List<MdmcTask>> getTaskList(@RequestBody MdmcStatusDto statusDto){
@@ -59,9 +73,9 @@ public class MdmcTaskFeiginClient extends BaseController implements MdmcTaskFeig
     }
     
     @ApiOperation(httpMethod = "POST",value = "分页查询列表")
-    public Wrapper<MdmcPageDto> getTaskList(@RequestBody MdmcQueryDto queryDto){
-        MdmcPageDto pageDto=taskService.getTaskListByPage(queryDto);
-        return WrapMapper.ok(pageDto);
+    public Wrapper<PageInfo> getTaskList(@RequestBody MdmcQueryDto queryDto){
+
+        return WrapMapper.ok(taskService.getTaskListByPage(queryDto));
     }
 
     @Override

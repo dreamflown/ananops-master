@@ -90,6 +90,13 @@ public class PmcContractController extends BaseController {
         return WrapMapper.ok(pmcContractList);
     }
 
+    @PostMapping("/getContractCount/{groupId}")
+    @ApiOperation(httpMethod = "POST", value = "获取合同总数")
+    public Wrapper getContractCount(@ApiParam(value = "组织id") @PathVariable Long groupId) {
+        log.info("获取合同总数");
+        int count = pmcContractService.getContractCount(groupId);
+        return WrapMapper.ok(count);
+    }
 
 
 

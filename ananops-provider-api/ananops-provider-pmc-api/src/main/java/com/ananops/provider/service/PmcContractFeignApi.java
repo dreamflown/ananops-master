@@ -33,6 +33,6 @@ public interface PmcContractFeignApi {
      * @param contractId
      * @return
      */
-    @PostMapping("/getContractById/{contractId}")
+    @PostMapping("/api/getContractById/{contractId}")
     Wrapper<PmcContractDto> getContractById(@PathVariable(value = "contractId") Long contractId);
 }

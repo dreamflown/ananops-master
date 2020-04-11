@@ -77,6 +77,12 @@ public class AmcAlarmDto implements Serializable {
     private BigDecimal alarmLatitude;
 
     /**
+     * 报警维度
+     */
+    @ApiModelProperty(value = "报警图片")
+    private String alarmPhoto;
+
+    /**
      * 最近发生时间
      */
     @ApiModelProperty(value = "最近发生时间",example = "2019-12-01 12:18:48")

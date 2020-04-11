@@ -19,5 +19,6 @@
     <result column="user_id" property="userId" jdbcType="BIGINT" />
     <result column="score" property="score" jdbcType="INTEGER" />
     <result column="contents" property="contents" jdbcType="VARCHAR" />
+    <result column="check_contents" property="checkContens" jdbcType="VARCHAR" />
   </resultMap>
 </mapper>

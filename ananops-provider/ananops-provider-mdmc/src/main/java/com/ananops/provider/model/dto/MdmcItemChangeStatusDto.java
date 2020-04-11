@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Data
 @ApiModel
 public class MdmcItemChangeStatusDto implements Serializable {
+    private static final long serialVersionUID = 8199564183949562856L;
     /**
      * 任务子项的ID
      */

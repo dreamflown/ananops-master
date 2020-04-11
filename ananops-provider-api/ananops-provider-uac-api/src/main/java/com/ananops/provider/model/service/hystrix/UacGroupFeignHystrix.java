@@ -1,7 +1,10 @@
 package com.ananops.provider.model.service.hystrix;
 
+import com.ananops.provider.model.dto.group.CompanyDto;
+import com.ananops.provider.model.dto.group.GroupNameLikeQuery;
 import com.ananops.provider.model.dto.group.GroupSaveDto;
 import com.ananops.provider.model.dto.group.GroupStatusDto;
+import com.ananops.provider.model.vo.GroupZtreeVo;
 import com.ananops.provider.model.dto.user.IdStatusDto;
 import com.ananops.provider.model.service.UacGroupFeignApi;
 import com.ananops.wrapper.Wrapper;
@@ -45,7 +48,17 @@ public class UacGroupFeignHystrix implements UacGroupFeignApi {
     }
 
     @Override
-    public Wrapper<List<GroupSaveDto>> getUacGroupByLikeName(String groupName) {
+    public Wrapper<List<GroupZtreeVo>> getGroupTreeById(Long groupId) {
+        return null;
+    }
+
+    @Override
+    public Wrapper<CompanyDto> getCompanyInfoById(Long groupId) {
+        return null;
+    }
+
+    @Override
+    public Wrapper<List<GroupSaveDto>> getUacGroupByLikeName(@RequestBody GroupNameLikeQuery groupNameLikeQuery) {
         return null;
     }
 }

@@ -12,6 +12,9 @@ import com.ananops.base.dto.LoginAuthDto;
 import com.ananops.base.dto.UpdateStatusDto;
 import com.ananops.core.support.IService;
 import com.ananops.provider.model.domain.MdcDict;
+import com.ananops.provider.model.domain.MdcSysDict;
+import com.ananops.provider.model.dto.MdcAddDictDto;
+import com.ananops.provider.model.dto.MdcGetDictDto;
 import com.ananops.provider.model.vo.MdcDictVo;
 
 import java.util.List;
@@ -31,38 +34,69 @@ public interface MdcDictService extends IService<MdcDict> {
 	List<MdcDictVo> getDictTreeList();
 
 	/**
-	 * 根据ID获取字典信息.
-	 *
-	 * @param dictId the dict id
-	 *
-	 * @return the mdc dict vo by id
+	 * 创建/编辑字典库
+	 * @param addDictDto
+	 * @param loginAuthDto
+	 * @return
 	 */
-	MdcDictVo getMdcDictVoById(Long dictId);
+	MdcAddDictDto saveDict(MdcAddDictDto addDictDto, LoginAuthDto loginAuthDto);
 
 	/**
-	 * 根据id修改字典信息.
-	 *
-	 * @param updateStatusDto the update status dto
-	 * @param loginAuthDto    the login auth dto
-	 *
-	 * @return the int
+	 * 根据用户id获取字典库列表
+	 * @param userId
+	 * @return
 	 */
-	void updateMdcDictStatusById(UpdateStatusDto updateStatusDto, LoginAuthDto loginAuthDto);
+	List<MdcSysDict> getDictListByUserId(Long userId);
 
 	/**
-	 * 编辑字典.
-	 *
-	 * @param mdcDict      the mdc dict
-	 * @param loginAuthDto the login auth dto
+	 * 根据字典库id删除字典库及其所属字典项
+	 * @param dictId
+	 * @return
 	 */
-	void saveMdcDict(MdcDict mdcDict, LoginAuthDto loginAuthDto);
+	MdcSysDict deleteDictByDictId(Long dictId, LoginAuthDto loginAuthDto);
 
 	/**
-	 * Check dict has child dict boolean.
+	 * 根据字典库Id查询字典库信息
 	 *
-	 * @param dictId the dict id
+	 * @param id
 	 *
-	 * @return the boolean
+	 * @return
 	 */
-	boolean checkDictHasChildDict(Long dictId);
+	MdcSysDict getMdcDictById(Long dictId);
+
+//	/**
+//	 * 根据ID获取字典信息.
+//	 *
+//	 * @param dictId the dict id
+//	 *
+//	 * @return the mdc dict vo by id
+//	 */
+//	MdcDictVo getMdcDictVoById(Long dictId);
+//
+//	/**
+//	 * 根据id修改字典信息.
+//	 *
+//	 * @param updateStatusDto the update status dto
+//	 * @param loginAuthDto    the login auth dto
+//	 *
+//	 * @return the int
+//	 */
+//	void updateMdcDictStatusById(UpdateStatusDto updateStatusDto, LoginAuthDto loginAuthDto);
+//
+//	/**
+//	 * 编辑字典.
+//	 *
+//	 * @param mdcDict      the mdc dict
+//	 * @param loginAuthDto the login auth dto
+//	 */
+//	void saveMdcDict(MdcDict mdcDict, LoginAuthDto loginAuthDto);
+//
+//	/**
+//	 * Check dict has child dict boolean.
+//	 *
+//	 * @param dictId the dict id
+//	 *
+//	 * @return the boolean
+//	 */
+//	boolean checkDictHasChildDict(Long dictId);
 }

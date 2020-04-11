@@ -138,7 +138,7 @@ public class AnanLogAspect {
                     System.out.println("巡检任务日志创建成功" + imcInspectionTaskLog);
                 }
                 List<ImcAddInspectionItemDto> imcAddInspectionItemDtoList = imcAddInspectionTaskDto.getImcAddInspectionItemDtoList();
-                if(imcAddInspectionItemDtoList.size()>0){//如果在创建巡检任务的同时还创建了巡检任务子项
+                if(null!=imcAddInspectionItemDtoList &&imcAddInspectionItemDtoList.size()>0){//如果在创建巡检任务的同时还创建了巡检任务子项
                     imcAddInspectionItemDtoList.forEach(item->{
                         ImcInspectionItemLog imcInspectionItemLog = createItemLog(item.getId(),taskId,item.getStatus(),startTime,endTime,"编辑巡检任务子项记录",os,browser,ipAddress);
                         if(imcInspectionItemLogService.createInspectionItemLog(imcInspectionItemLog,loginUser) == 1){

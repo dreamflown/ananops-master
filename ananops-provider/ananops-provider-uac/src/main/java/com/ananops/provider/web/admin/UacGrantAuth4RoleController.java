@@ -64,7 +64,7 @@ public class UacGrantAuth4RoleController extends BaseController {
 	 * @return the wrapper
 	 */
 	@PostMapping(value = "/bindMenu")
-	@ApiOperation(httpMethod = "POST", value = "角色分配权限")
+	@ApiOperation(httpMethod = "POST", value = "角色分配菜单")
 	@LogAnnotation
 	public Wrapper bindMenu(@ApiParam(name = "bindAuth", value = "权限信息") @RequestBody RoleBindMenuDto roleBindMenuDto) {
 		logger.info("角色分配权限. roleBindMenuDto= {}", roleBindMenuDto);

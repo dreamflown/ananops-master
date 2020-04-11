@@ -25,6 +25,7 @@ import java.io.Serializable;
 @Table(name = "an_uac_role_action")
 @Alias(value = "uacRoleAction")
 public class UacRoleAction implements Serializable {
+
 	private static final long serialVersionUID = -4240611881810188284L;
 
 	@Id

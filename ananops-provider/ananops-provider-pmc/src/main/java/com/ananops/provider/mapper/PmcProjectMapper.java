@@ -10,6 +10,8 @@ import java.util.List;
 @Mapper
 @Component
 public interface PmcProjectMapper extends MyMapper<PmcProject> {
+
     List<PmcProject> getProjectByUserId(Long userId);
 
+    List<PmcProject> getProjectByContractId(Long contractId);
 }

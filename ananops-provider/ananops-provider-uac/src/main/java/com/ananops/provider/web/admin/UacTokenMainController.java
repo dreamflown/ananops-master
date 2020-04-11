@@ -8,6 +8,7 @@
 
 package com.ananops.provider.web.admin;
 
+import com.ananops.base.dto.LoginAuthDto;
 import com.github.pagehelper.PageInfo;
 import com.ananops.core.support.BaseController;
 import com.ananops.provider.model.dto.token.TokenMainQueryDto;
@@ -50,7 +51,8 @@ public class UacTokenMainController extends BaseController {
 	@ApiOperation(httpMethod = "POST", value = "查询在线用户列表")
 	public Wrapper queryUacActionListWithPage(@ApiParam(name = "token") @RequestBody TokenMainQueryDto token) {
 		logger.info("查询在线用户列表. token={}", token);
-		PageInfo pageInfo = uacUserTokenService.listTokenWithPage(token);
+		LoginAuthDto loginAuthDto = getLoginAuthDto();
+		PageInfo pageInfo = uacUserTokenService.listTokenWithPage(token, loginAuthDto);
 		return WrapMapper.ok(pageInfo);
 	}
 }

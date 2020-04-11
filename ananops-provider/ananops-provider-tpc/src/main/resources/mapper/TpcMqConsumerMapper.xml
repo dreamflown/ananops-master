@@ -16,7 +16,7 @@
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
   </resultMap>
   <sql id="Base_Column_List">
-    ${alias}.id, ${alias}.version, ${alias}.aplication_name, ${alias}.consumer_code, ${alias}.consumer_name, ${alias}.status, ${alias}.remark,
+    ${alias}.id, ${alias}.version, ${alias}.application_name, ${alias}.consumer_code, ${alias}.consumer_name, ${alias}.status, ${alias}.remark,
     ${alias}.creator, ${alias}.creator_id, ${alias}.created_time, ${alias}.last_operator, ${alias}.last_operator_id, ${alias}.update_time
   </sql>
 

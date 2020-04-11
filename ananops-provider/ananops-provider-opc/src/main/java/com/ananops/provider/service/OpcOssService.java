@@ -76,5 +76,5 @@ public interface OpcOssService {
 	 *
 	 * @throws IOException the io exception
 	 */
-	OptUploadFileRespDto uploadFile(byte[] uploadBytes, String fileName, String filePath, String bucketName) throws IOException;
+	OptUploadFileRespDto uploadFile(byte[] uploadBytes, String fileName, String fileType, String filePath, String bucketName) throws IOException;
 }

@@ -105,4 +105,13 @@ public interface UacUserMapper extends MyMapper<UacUser> {
 	 * @return
 	 */
 	List<BindRoleDto> selectAllPermitBindRole(Integer version);
+
+	/**
+	 * 通过用户Id集合批量查询用户信息
+	 *
+	 * @param alreadyUserId 用户Id集合
+	 *
+	 * @return 返回用户信息列表
+	 */
+    List<UacUser> batchGetUserInfo(@Param("userIdList") List<Long> userIdList);
 }

@@ -24,13 +24,19 @@ public class EngineerDto implements Serializable {
     @ApiModelProperty("UAC对应的用户ID")
     private Long userId;
 
+    @ApiModelProperty("登录名")
+    private String loginName;
+
     @ApiModelProperty("姓名")
     private String userName;
 
     @ApiModelProperty("手机号")
     private String mobileNo;
 
-    @ApiModelProperty("账号状态. 0:在职, 1:离职")
+    @ApiModelProperty("邮箱")
+    private String email;
+
+    @ApiModelProperty("账号状态. ENABLE:在职, DISABLE:离职")
     private String status;
 
     @ApiModelProperty("工号")

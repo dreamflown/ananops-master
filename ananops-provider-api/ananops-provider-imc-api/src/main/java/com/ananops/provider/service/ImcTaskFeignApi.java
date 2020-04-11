@@ -51,4 +51,7 @@ public interface ImcTaskFeignApi {
 
     @PostMapping(value = "/api/task/acceptImcTaskByTaskId")
     Wrapper<ImcTaskChangeStatusDto> acceptImcTaskByFacilitator(@ApiParam(name = "acceptImcTaskByTaskId",value = "服务商接单（巡检任务）")@RequestBody ConfirmImcTaskDto confirmImcTaskDto);
+
+    @PostMapping(value = "/api/task/getImcTaskList/{imcTaskIdList}")
+    Wrapper<List<TaskDto>> getImcTaskList(@PathVariable("imcTaskIdList") Long[] imcTaskIdList);
 }

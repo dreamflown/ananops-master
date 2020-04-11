@@ -1,5 +1,6 @@
 package com.ananops.provider.model.dto.group;
 
+import com.ananops.base.dto.LoginAuthDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -59,6 +60,12 @@ public class GroupSaveDto implements Serializable {
      */
     @ApiModelProperty(value = "组织类型")
     private String type;
+
+    /**
+     * 上级组织
+     */
+    @ApiModelProperty(value = "上级组织")
+    private Long pid;
 
     /**
      * 组织地址
@@ -124,4 +131,9 @@ public class GroupSaveDto implements Serializable {
      * 四级地址数组
      */
     private List<Long> addressList;
+
+    /**
+     * 当前操作用户信息
+     */
+    private LoginAuthDto loginAuthDto;
 }

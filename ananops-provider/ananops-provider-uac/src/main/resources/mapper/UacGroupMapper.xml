@@ -267,4 +267,30 @@
         and g.group_name like concat('%',#{groupName},'%')
     </select>
 
+    <select id="selectAllUserByGroupId" parameterType="map" resultType="com.ananops.provider.model.dto.role.BindUserDto">
+        SELECT
+            a.id as userId,
+            a.mobile_no as mobileNo,
+            a.user_name as userName,
+            (a.id = b.id) OR (a.id = #{currentUserId}) AS disabled
+        FROM
+            (
+                SELECT
+                    u.id,
+                    u.mobile_no,
+                    u.user_name
+                FROM an_uac_user u INNER JOIN an_uac_group_user gu ON u.id = gu.user_id
+                    INNER JOIN an_uac_group gp ON gp.id = gu.group_id
+                WHERE gp.id = #{groupId}) a
+            LEFT JOIN
+            (
+                SELECT
+                    u.id,
+                    u.mobile_no,
+                    u.user_name
+                FROM an_uac_user u INNER JOIN an_uac_role_user ru ON u.id = ru.user_id
+                    INNER JOIN an_uac_role role ON role.id = ru.role_id
+                WHERE role.id = #{superManagerRoleId}) b
+        ON a.id = b.id
+    </select>
 </mapper>

@@ -74,4 +74,14 @@
             #{item}
         </foreach>
     </select>
+    <select id="listByRoleIdUserIds" resultType="java.lang.Long">
+        SELECT
+            ru.user_id
+        FROM
+            an_uac_role_user ru
+        WHERE ru.role_id = #{roleId} AND ru.user_id in
+        <foreach collection="userIds" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

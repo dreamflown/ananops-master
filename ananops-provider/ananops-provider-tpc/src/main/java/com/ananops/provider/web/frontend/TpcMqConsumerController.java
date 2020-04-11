@@ -8,6 +8,9 @@
 
 package com.ananops.provider.web.frontend;
 
+import com.ananops.provider.model.domain.TpcMqSubscribe;
+import com.ananops.provider.model.dto.AddMqConsumerDto;
+import com.ananops.provider.model.dto.ConsumerSubscribeTopicDto;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ananops.PublicUtil;
@@ -47,6 +50,25 @@ public class TpcMqConsumerController extends BaseController {
 	@Resource
 	private TpcMqConsumerService tpcMqConsumerService;
 
+	/**
+	 * 创建生产者
+	 * @param addMqConsumerDto
+	 * @return
+	 */
+	@PostMapping(value = "/addConsumer")
+	@ApiOperation(httpMethod = "POST", value = "创建Mq消费者")
+	public Wrapper<TpcMqConsumer> addConsumer(@ApiParam(name = "consumer", value = "Mq消费者") @RequestBody AddMqConsumerDto addMqConsumerDto){
+		LoginAuthDto loginAuthDto = super.getLoginAuthDto();
+		logger.info("创建消费者addMqConsumer={}",addMqConsumerDto);
+		return WrapMapper.ok(tpcMqConsumerService.addConsumer(addMqConsumerDto,loginAuthDto));
+	}
+
+	@PostMapping(value = "/consumerSubscribeTopic")
+	@ApiOperation(httpMethod = "POST", value = "Mq消费者订阅topic")
+	public Wrapper<TpcMqSubscribe> consumerSubscribeTopic(@ApiParam(name = "consumerSubscribeTopicDto", value = "Mq消费者订阅topic") @RequestBody ConsumerSubscribeTopicDto consumerSubscribeTopicDto){
+		logger.info("消费者订阅主题consumerSubscribeTopic={}",consumerSubscribeTopicDto);
+		return WrapMapper.ok(tpcMqConsumerService.consumerSubcribeTopic(consumerSubscribeTopicDto));
+	}
 	/**
 	 * 查询Mq消费者列表.
 	 *

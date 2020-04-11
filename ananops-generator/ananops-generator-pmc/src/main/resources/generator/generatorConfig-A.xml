@@ -52,7 +52,7 @@
 <!--            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
 <!--        </table>-->
 
-        <table tableName="an_amc_alarm" domainObjectName="AmcAlarm">
+        <table tableName="an_uac_api" domainObjectName="UacApi">
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
 

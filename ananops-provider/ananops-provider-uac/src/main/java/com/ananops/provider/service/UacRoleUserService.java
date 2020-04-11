@@ -11,6 +11,7 @@ package com.ananops.provider.service;
 import com.ananops.core.support.IService;
 import com.ananops.provider.model.domain.UacRoleUser;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -115,4 +116,15 @@ public interface UacRoleUserService extends IService<UacRoleUser> {
 	 * @param roleId the role id
 	 */
 	void deleteByRoleId(Long roleId);
+
+	/**
+	 * 查询该userId集合中，同种角色的有哪些。
+	 *
+	 * @param roleId 角色Id
+	 *
+	 * @param userIds 用户Id集合
+	 *
+	 * @return 所有同种角色的用户Id集合
+	 */
+	List<Long> listByRoleIdUserIds(Long roleId, List<Long> userIds);
 }

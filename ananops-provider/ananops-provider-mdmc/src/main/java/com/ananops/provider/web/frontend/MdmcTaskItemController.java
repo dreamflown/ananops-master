@@ -41,7 +41,7 @@ public class MdmcTaskItemController extends BaseController {
 
     @PostMapping(value = "/save")
     @ApiOperation(httpMethod = "POST",value = "编辑任务子项记录")
-    public Wrapper<MdmcTaskItem> saveInspectionItem(@ApiParam(name = "saveTaskItem",value = "新增一条任务子项记录")@RequestBody MdmcAddTaskItemDto mdmcAddTaskItemDto){
+    public Wrapper<MdmcTaskItem> saveItem(@ApiParam(name = "saveTaskItem",value = "新增一条任务子项记录")@RequestBody MdmcAddTaskItemDto mdmcAddTaskItemDto){
         LoginAuthDto loginAuthDto = getLoginAuthDto();
         return WrapMapper.ok(taskItemService.saveItem(mdmcAddTaskItemDto,loginAuthDto));
     }
@@ -51,6 +51,13 @@ public class MdmcTaskItemController extends BaseController {
 //
 //        return WrapMapper.ok(taskItemService.getItemByTaskId(statusDto));
 //    }
+
+    @GetMapping(value = "/getItemByItemId")
+    @ApiOperation(httpMethod = "GET",value = "根据任务子项的ID，获取当前的任务子项详情")
+    public Wrapper<MdmcTaskItem> getItemByItemId(@RequestParam("itemId") Long itemId){
+        MdmcTaskItem taskItem = taskItemService.getItemById(itemId);
+        return WrapMapper.ok(taskItem);
+    }
 
     @PostMapping(value = "/modifyItemStatusByItemId")
     @ApiOperation(httpMethod = "POST",value = "更改任务子项的状态")
@@ -100,5 +107,31 @@ public class MdmcTaskItemController extends BaseController {
         return WrapMapper.ok(taskItemService.getItemList(statusDto));
     }
 
+    /**
+     * 根据工单id获取任务子项数目
+     *
+     * @param taskId HTTP请求参数
+     *
+     * @return 返回
+     */
+    @GetMapping(value = "/getTaskItemCountByTaskId")
+    @ApiOperation(httpMethod = "GET",value = "根据工单id获取任务子项数目")
+    public Wrapper<Integer> getTaskItemCountByTaskId(@ApiParam(name = "taskId",value = "工单id")@RequestParam("taskId") Long taskId) {
 
+        return WrapMapper.ok(taskItemService.getTaskItemCount(taskId));
+    }
+
+    /**
+     * 根据任务子项id删除任务子项
+     *
+     * @param itemId HTTP请求参数
+     *
+     * @return 返回
+     */
+    @PostMapping(value = "/deleteItemByItemId/{itemId}")
+    @ApiOperation(httpMethod = "POST",value = "根据任务子项id删除任务子项")
+    public Wrapper<MdmcTaskItem> deleteItemByItemId(@PathVariable Long itemId) {
+        LoginAuthDto loginAuthDto = getLoginAuthDto();
+        return WrapMapper.ok(taskItemService.deleteItemById(itemId,loginAuthDto));
+    }
 }

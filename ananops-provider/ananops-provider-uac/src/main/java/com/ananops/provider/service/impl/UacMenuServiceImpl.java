@@ -62,12 +62,13 @@ public class UacMenuServiceImpl extends BaseService<UacMenu> implements UacMenuS
 		List<MenuVo> menuVoList = Lists.newArrayList();
 		List<UacMenu> menuList = Lists.newArrayList();
 		Set<UacMenu> menuSet = Sets.newHashSet();
-		// 如果是admin则返回所有的菜单
+		// 如果是admin则返回所有的菜单，包括禁用的菜单
 		if (userId == 1L) {
 			// 1.1 查询该用户下所有的菜单列表
 			UacMenu uacMenuQuery = new UacMenu();
-			uacMenuQuery.setStatus(UacMenuStatusEnum.ENABLE.getType());
+//			uacMenuQuery.setStatus(UacMenuStatusEnum.ENABLE.getType());
 			uacMenuQuery.setApplicationId(applicationId);
+			//菜单排序
 			uacMenuQuery.setOrderBy(" level asc,number asc");
 			menuList = uacMenuMapper.selectMenuList(uacMenuQuery);
 		} else {
@@ -120,6 +121,7 @@ public class UacMenuServiceImpl extends BaseService<UacMenu> implements UacMenuS
 			BeanUtils.copyProperties(uacMenu, menuVo);
 			menuVo.setUrl(uacMenu.getUrl());
 			menuVo.setMenuName(uacMenu.getMenuName());
+			menuVo.setKey(uacMenu.getId());
 			menuVoList.add(menuVo);
 		}
 		return menuVoList;
@@ -146,7 +148,7 @@ public class UacMenuServiceImpl extends BaseService<UacMenu> implements UacMenuS
 				throw new UacBizException(ErrorCodeEnum.UAC10013002, menuId);
 			}
 
-			menu.setStatus(UacMenuStatusEnum.ENABLE.getType());
+//			menu.setStatus(UacMenuStatusEnum.ENABLE.getType());
 			menu.setCreatorId(loginAuthDto.getUserId());
 			menu.setCreator(loginAuthDto.getUserName());
 			menu.setLastOperatorId(loginAuthDto.getUserId());
@@ -380,12 +382,12 @@ public class UacMenuServiceImpl extends BaseService<UacMenu> implements UacMenuS
 		List<UacMenu> menuList = uacMenuMapper.listMenuListByRoleId(roleId);
 		List<UacMenu> addMenuList = Lists.newArrayList();
 
-		if (PublicUtil.isNotEmpty(menuList)) {
-			for (UacMenu uacMenu : menuList) {
-				getMenuList(addMenuList, uacMenu.getPid());
-			}
-		}
-		menuList.addAll(addMenuList);
+//		if (PublicUtil.isNotEmpty(menuList)) {
+//			for (UacMenu uacMenu : menuList) {
+//				getMenuList(addMenuList, uacMenu.getPid());
+//			}
+//		}
+//		menuList.addAll(addMenuList);
 		return new ArrayList<>(new HashSet<>(menuList));
 	}
 
